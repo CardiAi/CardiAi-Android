@@ -12,6 +12,8 @@ hilt = "2.49"
 hilt-lifecycle = "1.0.0-alpha03"
 hilt-navigation = "1.2.0"
 retrofit = "2.11.0"
+compose-destinations = "1.10.2"
+ksp = "1.9.0-1.0.13"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -34,9 +36,13 @@ hilt-lifecycle-viewmodel = { module = "androidx.hilt:hilt-lifecycle-viewmodel", 
 hilt-navigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-navigation" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "retrofit" }
+lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
+destinations-core = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "compose-destinations" }
+destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "compose-destinations" }
+extended-icons = { module = "androidx.compose.material:material-icons-extended" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
-
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

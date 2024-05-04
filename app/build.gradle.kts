@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.hilt)
     kotlin("kapt")
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -68,6 +69,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.lifecycle.runtime.compose)
+    implementation(libs.extended.icons)
 }
 
 // Hilt Dependency Injection
@@ -81,4 +85,10 @@ dependencies {
 dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
+}
+
+// Compose Destinations
+dependencies {
+    implementation(libs.destinations.core)
+    ksp(libs.destinations.ksp)
 }
