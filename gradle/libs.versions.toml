@@ -14,6 +14,7 @@ hilt-navigation = "1.2.0"
 retrofit = "2.11.0"
 compose-destinations = "1.10.2"
 ksp = "1.9.0-1.0.13"
+navigationSafeArgsGenerator = "2.7.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,6 +41,7 @@ lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-com
 destinations-core = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "compose-destinations" }
 destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "compose-destinations" }
 extended-icons = { module = "androidx.compose.material:material-icons-extended" }
+androidx-navigation-safe-args-generator = { group = "androidx.navigation", name = "navigation-safe-args-generator", version.ref = "navigationSafeArgsGenerator" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
