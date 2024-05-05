@@ -54,8 +54,8 @@ class MainActivity : ComponentActivity() {
                             )
                         ),
                     )
-                val activeUser by viewModel.activeUser.collectAsStateWithLifecycle()
-                val startRoute = if (activeUser != null) NavGraphs.home else NavGraphs.auth
+                val hasActiveUser by viewModel.hasActiveUser.collectAsStateWithLifecycle()
+                val startRoute = if (hasActiveUser) NavGraphs.home else NavGraphs.auth
                 DestinationsNavHost(
                     navGraph = NavGraphs.root,
                     startRoute = startRoute,
