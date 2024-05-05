@@ -30,6 +30,7 @@ import com.codlin.cardiai.presentation.components.ThemePasswordField
 import com.codlin.cardiai.presentation.components.ThemeTextField
 import com.codlin.cardiai.presentation.destinations.SignupScreenDestination
 import com.codlin.cardiai.presentation.navigation.AuthNavGraph
+import com.codlin.cardiai.presentation.theme.CardiAiTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -143,10 +144,12 @@ private fun LoginContent(
 }
 
 @Composable
-@Preview
+@Preview(showBackground = true)
 private fun LoginPreview() {
-    LoginContent(
-        state = LoginState(),
-        onEvent = {},
-    )
+    CardiAiTheme{
+        LoginContent(
+            state = LoginState(),
+            onEvent = {},
+        )
+    }
 }

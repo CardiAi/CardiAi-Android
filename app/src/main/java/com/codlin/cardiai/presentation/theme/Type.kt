@@ -13,6 +13,7 @@ val OpenSansFontFamily = FontFamily(
     Font(R.font.opensans_bold, weight = FontWeight.W700),
     Font(R.font.opensans_semibold, weight = FontWeight.W600),
     Font(R.font.opensans_regular, weight = FontWeight.W400),
+    Font(R.font.opensans_medium, weight = FontWeight.W500),
 )
 
 // Set of Material typography styles to start with
@@ -64,4 +65,19 @@ val Typography = Typography(
         fontFamily = OpenSansFontFamily,
         fontWeight = FontWeight.W400,
     ),
+    //Label Large
+    labelLarge = TextStyle(
+        fontSize = 14.sp,
+        lineHeight = 20.sp,
+        fontFamily = OpenSansFontFamily,
+        fontWeight = FontWeight.W500,
+        letterSpacing = 0.1.sp,
+    ),
+    //Caption Regular
+    displayMedium = TextStyle(
+        fontSize = 12.sp,
+        lineHeight = 14.4.sp,
+        fontFamily = OpenSansFontFamily,
+        fontWeight = FontWeight.W400,
+    )
 )
