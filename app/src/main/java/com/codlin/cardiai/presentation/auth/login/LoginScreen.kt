@@ -39,6 +39,7 @@ import com.codlin.cardiai.presentation.navigation.AuthNavGraph
 import com.codlin.cardiai.presentation.theme.CardiAiTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.navigation.popUpTo
 
 @AuthNavGraph
 @Destination
@@ -55,13 +56,17 @@ fun LoginScreen(
             when (it) {
                 LoginDestination.HomeDestination -> {
                     navigator.navigate(NavGraphs.home) {
-                        popUpTo("auth") {
+                        popUpTo(NavGraphs.auth) {
                             inclusive = true
                         }
                     }
                 }
 
-                LoginDestination.SignupDestination -> navigator.navigate(SignupScreenDestination)
+                LoginDestination.SignupDestination -> navigator.navigate(SignupScreenDestination) {
+                    popUpTo(NavGraphs.auth.startRoute) {
+                        inclusive = false
+                    }
+                }
             }
         }
         state.value.screenError?.let { error ->
@@ -180,7 +185,7 @@ private fun LoginContent(
 @Composable
 @Preview(showBackground = true)
 private fun LoginPreview() {
-    CardiAiTheme{
+    CardiAiTheme {
         LoginContent(
             state = LoginState(),
             onEvent = {},

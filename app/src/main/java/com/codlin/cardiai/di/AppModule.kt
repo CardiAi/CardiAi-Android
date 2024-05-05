@@ -1,6 +1,7 @@
 package com.codlin.cardiai.di
 
 import android.content.Context
+import com.codlin.cardiai.BuildConfig
 import com.codlin.cardiai.data.datasource.local.datastore.UserPreferences
 import com.codlin.cardiai.data.datasource.remote.ApiService
 import com.codlin.cardiai.data.datasource.remote.interceptor.AuthInterceptor
@@ -10,6 +11,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -21,9 +23,16 @@ object AppModule {
     @Provides
     @Singleton
     fun provideOkHttp(authInterceptor: AuthInterceptor): OkHttpClient {
-        return OkHttpClient.Builder()
+        val client = OkHttpClient.Builder()
             .addInterceptor(authInterceptor)
-            .build()
+
+        if (BuildConfig.DEBUG) {
+            client.addInterceptor(
+                HttpLoggingInterceptor()
+                    .setLevel(HttpLoggingInterceptor.Level.BODY)
+            )
+        }
+        return client.build()
     }
 
     @Provides

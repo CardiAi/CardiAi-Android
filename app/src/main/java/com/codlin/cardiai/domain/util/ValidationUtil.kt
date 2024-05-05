@@ -3,6 +3,7 @@ package com.codlin.cardiai.domain.util
 import android.util.Patterns
 import com.codlin.cardiai.domain.util.exception.BlankPasswordException
 import com.codlin.cardiai.domain.util.exception.InvalidEmailException
+import com.codlin.cardiai.domain.util.exception.ShortNameException
 import com.codlin.cardiai.domain.util.exception.ShortPasswordException
 
 object ValidationUtil {
@@ -23,6 +24,12 @@ object ValidationUtil {
         }
         if (password.length < 6) {
             throw ShortPasswordException()
+        }
+    }
+
+    fun validateName(name: String) {
+        if (name.length < 4) {
+            throw ShortNameException()
         }
     }
 }

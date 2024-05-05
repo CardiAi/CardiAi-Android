@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -5,6 +7,14 @@ plugins {
     kotlin("kapt")
     alias(libs.plugins.ksp)
 }
+
+val localPropertiesFile = rootProject.file("local.properties")
+val localProperties = Properties().apply {
+    load(localPropertiesFile.inputStream())
+}
+
+val userEmail: String = localProperties.getProperty("userEmail")
+val userPass: String = localProperties.getProperty("userPass")
 
 android {
     namespace = "com.codlin.cardiai"
@@ -24,6 +34,11 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "userEmail", userEmail)
+            buildConfigField("String", "userPass", userPass)
+        }
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -41,6 +56,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -86,6 +102,7 @@ dependencies {
 dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
+    implementation(libs.logging.interceptor)
 }
 
 // Compose Destinations
