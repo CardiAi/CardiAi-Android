@@ -3,39 +3,65 @@ package com.codlin.cardiai
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.getValue
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.codlin.cardiai.presentation.NavGraphs
 import com.codlin.cardiai.presentation.theme.CardiAiTheme
 import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.animations.defaults.NestedNavGraphDefaultAnimations
+import com.ramcosta.composedestinations.rememberNavHostEngine
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            CardiAiTheme {
-                DestinationsNavHost(navGraph = NavGraphs.root)
+
+    private val viewModel by viewModels<MainViewModel>()
+
+    private fun splashScreenSetup() {
+        installSplashScreen().apply {
+            setKeepOnScreenCondition {
+                viewModel.isAppReady.not()
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+    override fun onCreate(savedInstanceState: Bundle?) {
+        splashScreenSetup()
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    CardiAiTheme {
-        Greeting("Android")
+        super.onCreate(savedInstanceState)
+        setContent {
+            CardiAiTheme {
+                val navHostEngine =
+                    rememberNavHostEngine(
+                        defaultAnimationsForNestedNavGraph = mapOf(
+                            NavGraphs.auth to NestedNavGraphDefaultAnimations(
+                                enterTransition = {
+                                    slideIntoContainer(
+                                        towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                                        animationSpec = tween(durationMillis = 500)
+                                    )
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(
+                                        towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                                        animationSpec = tween(durationMillis = 500)
+                                    )
+                                }
+                            )
+                        ),
+                    )
+                val activeUser by viewModel.activeUser.collectAsStateWithLifecycle()
+                val startRoute = if (activeUser != null) NavGraphs.home else NavGraphs.auth
+                DestinationsNavHost(
+                    navGraph = NavGraphs.root,
+                    startRoute = startRoute,
+                    engine = navHostEngine
+                )
+            }
+        }
     }
 }

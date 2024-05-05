@@ -72,6 +72,7 @@ dependencies {
 
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.extended.icons)
+    implementation(libs.splashscreen)
 }
 
 // Hilt Dependency Injection
@@ -91,4 +92,9 @@ dependencies {
 dependencies {
     implementation(libs.destinations.core)
     ksp(libs.destinations.ksp)
+}
+
+// Datastore
+dependencies {
+    implementation(libs.datastore.preferences)
 }

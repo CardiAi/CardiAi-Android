@@ -24,7 +24,8 @@ fun ThemeTextField(
     onValueChange: (String) -> Unit,
     label: String,
     modifier: Modifier = Modifier,
-    keyboardOptions: KeyboardOptions = KeyboardOptions()
+    keyboardOptions: KeyboardOptions = KeyboardOptions(),
+    isError: Boolean = false,
 ) {
     OutlinedTextField(
         modifier = modifier,
@@ -36,6 +37,7 @@ fun ThemeTextField(
         shape = RoundedCornerShape(4.dp),
         keyboardOptions = keyboardOptions,
         singleLine = true,
+        isError = isError,
     )
 }
 
@@ -47,6 +49,7 @@ fun ThemePasswordField(
     isPasswordVisible: Boolean,
     modifier: Modifier = Modifier,
     imeAction: ImeAction = ImeAction.Default,
+    isError: Boolean = false,
 ) {
     OutlinedTextField(
         modifier = modifier,
@@ -81,5 +84,6 @@ fun ThemePasswordField(
             imeAction = imeAction
         ),
         singleLine = true,
+        isError = isError,
     )
 }

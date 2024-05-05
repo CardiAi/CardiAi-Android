@@ -1,5 +1,6 @@
 package com.codlin.cardiai.presentation.auth.login
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,10 +10,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
@@ -41,34 +47,60 @@ fun LoginScreen(
     navigator: DestinationsNavigator,
 ) {
     val state = viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
+
     LaunchedEffect(key1 = state.value) {
-        when (state.value.navDestination) {
-            null -> return@LaunchedEffect
-            LoginDestination.HomeDestination -> {
-                navigator.navigate(NavGraphs.home) {
-                    popUpTo("auth") {
-                        inclusive = true
+        state.value.navDestination?.let {
+            when (it) {
+                LoginDestination.HomeDestination -> {
+                    navigator.navigate(NavGraphs.home) {
+                        popUpTo("auth") {
+                            inclusive = true
+                        }
                     }
                 }
-            }
 
-            LoginDestination.SignupDestination -> navigator.navigate(SignupScreenDestination)
+                LoginDestination.SignupDestination -> navigator.navigate(SignupScreenDestination)
+            }
+        }
+        state.value.screenError?.let { error ->
+            snackbarHostState.showSnackbar(error)
+        }
+        state.value.emailError?.let { error ->
+            snackbarHostState.showSnackbar(error)
+        }
+        state.value.passwordError?.let { error ->
+            snackbarHostState.showSnackbar(error)
         }
         viewModel.resetEvents()
     }
-    LoginContent(state = state.value, onEvent = viewModel::onEvent)
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }
+    ) {
+        LoginContent(
+            state = state.value,
+            onEvent = viewModel::onEvent,
+            modifier = Modifier.padding(it)
+        )
+    }
 }
 
 @Composable
 private fun LoginContent(
     state: LoginState,
     onEvent: (LoginEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Box(modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
+    Box(modifier = modifier.padding(horizontal = 24.dp, vertical = 16.dp)) {
         Logo(
             Modifier
                 .align(Alignment.TopStart),
         )
+        AnimatedVisibility(visible = state.isLoading, modifier = Modifier.align(Alignment.Center)) {
+            CircularProgressIndicator()
+        }
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -107,7 +139,8 @@ private fun LoginContent(
                         imeAction = ImeAction.Next,
                     ),
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    isError = state.emailError != null,
                 )
                 ThemePasswordField(
                     value = state.passwordValue,
@@ -119,7 +152,8 @@ private fun LoginContent(
                     },
                     isPasswordVisible = state.isPasswordVisible,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxWidth(),
+                    isError = state.passwordError != null,
                 )
             }
             Spacer(modifier = Modifier.height(140.dp))

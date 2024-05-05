@@ -1,9 +1,12 @@
 package com.codlin.cardiai.domain.repo
 
 import com.codlin.cardiai.domain.model.User
+import com.codlin.cardiai.domain.util.Resource
+import kotlinx.coroutines.flow.Flow
 
 interface UserRepo {
-    suspend fun login(email: String, password: String): Result<User>
-    fun signup(name: String, email: String, password: String): Result<User>
-    fun logout(): Result<Unit>
+    fun login(email: String, password: String): Flow<Resource<User>>
+    fun signup(name: String, email: String, password: String): Flow<Resource<Unit>>
+    fun logout(): Resource<Unit>
+    fun getActiveUser(): Flow<Resource<User>>
 }
