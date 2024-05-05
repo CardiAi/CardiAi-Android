@@ -29,6 +29,7 @@ import com.codlin.cardiai.presentation.components.ThemePasswordField
 import com.codlin.cardiai.presentation.components.ThemeTextField
 import com.codlin.cardiai.presentation.destinations.LoginScreenDestination
 import com.codlin.cardiai.presentation.navigation.AuthNavGraph
+import com.codlin.cardiai.presentation.theme.CardiAiTheme
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
@@ -62,7 +63,7 @@ private fun SignupContent(
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Bottom
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -120,7 +121,7 @@ private fun SignupContent(
 
             }
 
-            Spacer(modifier = Modifier.height(50.dp))
+            Spacer(modifier = Modifier.height(100.dp))
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -138,14 +139,18 @@ private fun SignupContent(
                     onClick = { onEvent(SignupEvent.OnLoginClicked) },
                     isPrimary = false)
             }
+
+            Spacer(modifier = Modifier.height(48.dp))
         }
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun SignupScreenPreview() {
-    SignupContent(
-        state = SignupState(),
-        onEvent = {})
+    CardiAiTheme {
+        SignupContent(
+            state = SignupState(),
+            onEvent = {})
+    }
 }
