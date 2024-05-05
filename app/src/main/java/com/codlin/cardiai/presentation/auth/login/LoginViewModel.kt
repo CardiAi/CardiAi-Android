@@ -1,11 +1,13 @@
 package com.codlin.cardiai.presentation.auth.login
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.codlin.cardiai.domain.usecase.LoginUsecase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,10 +26,8 @@ class LoginViewModel @Inject constructor(private val loginUsecase: LoginUsecase)
             }
 
             LoginEvent.OnLoginClicked -> {
-                try {
+                viewModelScope.launch {
                     loginUsecase(_state.value.emailValue, _state.value.passwordValue)
-                } catch (e: Exception) {
-
                 }
                 _state.update {
                     it.copy(
