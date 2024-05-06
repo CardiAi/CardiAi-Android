@@ -15,7 +15,8 @@ import com.codlin.cardiai.presentation.theme.Primary200
 
 @Composable
 fun StartDiagnosisButton(
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    expanded: Boolean = true
 ) {
     ExtendedFloatingActionButton(
         onClick = onClick,
@@ -34,6 +35,7 @@ fun StartDiagnosisButton(
                 textAlign = TextAlign.Center
             )
         },
+        expanded = expanded,
     )
 }
 
@@ -41,6 +43,6 @@ fun StartDiagnosisButton(
 @Composable
 private fun StartDiagnosisButtonPreview() {
     CardiAiTheme {
-        StartDiagnosisButton {}
+        StartDiagnosisButton({})
     }
 }

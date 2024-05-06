@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.filled.MoreVert
@@ -21,11 +22,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -38,6 +41,7 @@ import com.codlin.cardiai.domain.util.exception.NoDataException
 import com.codlin.cardiai.presentation.NavGraphs
 import com.codlin.cardiai.presentation.components.LazyPagingItemsError
 import com.codlin.cardiai.presentation.components.SearchField
+import com.codlin.cardiai.presentation.components.isScrollingUp
 import com.codlin.cardiai.presentation.destinations.PatientDetailsScreenDestination
 import com.codlin.cardiai.presentation.home.patients_list.components.PatientItem
 import com.codlin.cardiai.presentation.home.patients_list.components.StartDiagnosisButton
@@ -89,6 +93,9 @@ private fun PatientListContent(
     patients: LazyPagingItems<Patient>,
     onEvent: (PatientListEvent) -> Unit,
 ) {
+    val listState = rememberLazyListState()
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     Scaffold(
         topBar = {
             AnimatedContent(targetState = state.isSearchVisible, label = "SearchBarAnimation") {
@@ -144,15 +151,20 @@ private fun PatientListContent(
                                     }
                                 )
                             }
-                        }
+                        },
+                        scrollBehavior = scrollBehavior
                     )
             }
         },
         floatingActionButton = {
-            StartDiagnosisButton(onClick = {
-                onEvent(PatientListEvent.OnStartDiagnosisClicked)
-            })
-        }
+            StartDiagnosisButton(
+                expanded = listState.isScrollingUp(),
+                onClick = {
+                    onEvent(PatientListEvent.OnStartDiagnosisClicked)
+                },
+            )
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -164,6 +176,7 @@ private fun PatientListContent(
                 modifier = Modifier
                     .fillMaxSize(),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
+                state = listState,
             ) {
                 items(patients.itemCount) { index ->
                     PatientItem(
