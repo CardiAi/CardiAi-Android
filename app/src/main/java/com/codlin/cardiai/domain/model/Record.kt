@@ -1,6 +1,6 @@
-package com.codlin.cardiai.data.datasource.remote.dto.records
+package com.codlin.cardiai.domain.model
 
-data class RecordDto(
+data class Record(
     val id: Int,
     val bloodPressure: String,
     val bloodSugar: String,

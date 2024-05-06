@@ -114,6 +114,7 @@ private fun PatientListContent(
         Box(
             modifier = Modifier
                 .size(100.dp)
+                .padding(it)
                 .background(Color.Blue)
                 .clickable {
                     onEvent(

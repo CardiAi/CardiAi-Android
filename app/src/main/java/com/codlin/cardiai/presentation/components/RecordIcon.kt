@@ -16,10 +16,10 @@ import com.codlin.cardiai.presentation.theme.CardiAiTheme
 import com.codlin.cardiai.presentation.theme.HeartBackground
 
 @Composable
-fun RecordIcon(result: Int?, modifier: Modifier = Modifier) {
+fun RecordIcon(result: Int?, modifierBackground: Modifier = Modifier, modifierHeart: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = modifier
+        modifier = modifierBackground
             .background(
                 shape = CircleShape,
                 color = HeartBackground,
@@ -37,6 +37,7 @@ fun RecordIcon(result: Int?, modifier: Modifier = Modifier) {
         Image(
             painter = painterResource(id = resId),
             contentDescription = if (result == 0) "Healthy" else "Degree $result",
+            modifier = modifierHeart
         )
     }
 }
@@ -45,6 +46,6 @@ fun RecordIcon(result: Int?, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 private fun RecordIconPreview() {
     CardiAiTheme {
-        RecordIcon(2, modifier = Modifier.size(64.dp))
+        RecordIcon(2, modifierBackground = Modifier.size(64.dp))
     }
 }
