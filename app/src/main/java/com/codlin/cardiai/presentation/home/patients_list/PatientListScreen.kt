@@ -1,24 +1,19 @@
 package com.codlin.cardiai.presentation.home.patients_list
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.Search
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -26,23 +21,20 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.codlin.cardiai.domain.model.Patient
-import com.codlin.cardiai.domain.util.exception.NoDataException
 import com.codlin.cardiai.presentation.NavGraphs
-import com.codlin.cardiai.presentation.components.LazyPagingItemsError
 import com.codlin.cardiai.presentation.components.SearchField
 import com.codlin.cardiai.presentation.components.isScrollingUp
 import com.codlin.cardiai.presentation.destinations.PatientDetailsScreenDestination
+import com.codlin.cardiai.presentation.home.components.PaginationLazyColumn
 import com.codlin.cardiai.presentation.home.patients_list.components.PatientItem
 import com.codlin.cardiai.presentation.home.patients_list.components.StartDiagnosisButton
 import com.codlin.cardiai.presentation.navigation.HomeNavGraph
@@ -166,94 +158,26 @@ private fun PatientListContent(
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
-        Box(
+        PaginationLazyColumn(
+            pagingItems = patients,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
-            contentAlignment = Alignment.Center,
-        ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize(),
-                state = listState,
-                contentPadding = PaddingValues(vertical = 16.dp)
-            ) {
-                items(patients.itemCount) { index ->
-                    PatientItem(
-                        patient = patients[index]!!,
-                        onClick = {
-                            onEvent(PatientListEvent.OnPatientClicked(patients[index]!!))
-                        },
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                    )
-                }
-                patients.apply {
-                    when {
-                        loadState.refresh is LoadState.Loading -> {
-                            item {
-                                Box(
-                                    modifier = Modifier.fillParentMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    CircularProgressIndicator()
-                                }
-                            }
-                        }
-
-                        loadState.refresh is LoadState.Error -> {
-                            val error = patients.loadState.refresh as LoadState.Error
-                            if (error.error is NoDataException) {
-                                if (itemCount == 0) {
-                                    item {
-                                        Box(
-                                            modifier = Modifier.fillParentMaxSize(),
-                                            contentAlignment = Alignment.Center
-                                        ) {
-                                            Text(
-                                                text = "You have no patients added yet.",
-                                                style = MaterialTheme.typography.bodyLarge,
-                                            )
-                                        }
-                                    }
-                                }
-                            } else {
-                                item {
-                                    LazyPagingItemsError(
-                                        errorMessage = error.error.localizedMessage
-                                            ?: "An unknown error has occurred."
-                                    )
-                                }
-                            }
-                        }
-
-                        loadState.append is LoadState.Loading -> {
-                            item {
-                                PatientItem(
-                                    patient = Patient(),
-                                    onClick = { },
-                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                                )
-                            }
-                        }
-
-                        /*loadState.refresh is LoadState.NotLoading -> {
-                            if (!loadState.source.prepend.endOfPaginationReached) {
-                                item {
-                                    LazyPagingItemsError(errorMessage = "Unable to connect to the server.")
-                                }
-                            }
-                        }*/
-
-                        loadState.append is LoadState.Error -> {
-                            item {
-                                LazyPagingItemsError(
-                                    errorMessage = "Unable to load more data."
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+            loadingItem = {
+                PatientItem(
+                    patient = Patient(),
+                    onClick = { },
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                )
+            },
+        ) { patient ->
+            PatientItem(
+                patient = patient,
+                onClick = {
+                    onEvent(PatientListEvent.OnPatientClicked(patient))
+                },
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+            )
         }
     }
 }
