@@ -31,7 +31,7 @@ fun RecordIcon(result: Int?, modifier: Modifier = Modifier) {
             2 -> R.drawable.heart_degree2
             3 -> R.drawable.heart_degree3
             4 -> R.drawable.heart_degree4
-            else -> R.drawable.heart_healthy
+            else -> R.drawable.heart_degree4
         }
 
         Image(

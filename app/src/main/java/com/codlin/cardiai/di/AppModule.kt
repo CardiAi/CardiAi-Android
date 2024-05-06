@@ -3,8 +3,9 @@ package com.codlin.cardiai.di
 import android.content.Context
 import com.codlin.cardiai.BuildConfig
 import com.codlin.cardiai.data.datasource.local.datastore.UserPreferences
-import com.codlin.cardiai.data.datasource.remote.ApiService
 import com.codlin.cardiai.data.datasource.remote.interceptor.AuthInterceptor
+import com.codlin.cardiai.data.datasource.remote.service.AuthService
+import com.codlin.cardiai.data.datasource.remote.service.PatientService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,8 +48,14 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): ApiService {
-        return retrofit.create(ApiService::class.java)
+    fun provideAuthService(retrofit: Retrofit): AuthService {
+        return retrofit.create(AuthService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePatientService(retrofit: Retrofit): PatientService {
+        return retrofit.create(PatientService::class.java)
     }
 
     @Provides

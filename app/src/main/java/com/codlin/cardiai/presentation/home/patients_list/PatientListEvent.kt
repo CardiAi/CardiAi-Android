@@ -7,4 +7,7 @@ sealed class PatientListEvent {
     data object OnStartDiagnosisClicked : PatientListEvent()
     data object ToggleMenu : PatientListEvent()
     data object OnLogout : PatientListEvent()
+    data class OnSearchQueryChange(val query: String) : PatientListEvent()
+    data object InstantSearch : PatientListEvent()
+    data object ToggleSearchVisibility : PatientListEvent()
 }

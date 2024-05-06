@@ -2,9 +2,9 @@ package com.codlin.cardiai.data.repo
 
 import android.util.Log
 import com.codlin.cardiai.data.datasource.local.datastore.UserPreferences
-import com.codlin.cardiai.data.datasource.remote.ApiService
 import com.codlin.cardiai.data.datasource.remote.dto.auth.LoginBody
 import com.codlin.cardiai.data.datasource.remote.dto.auth.SignupBody
+import com.codlin.cardiai.data.datasource.remote.service.AuthService
 import com.codlin.cardiai.data.datasource.remote.util.tryRequest
 import com.codlin.cardiai.domain.model.User
 import com.codlin.cardiai.domain.repo.UserRepo
@@ -17,16 +17,17 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class UserRepoImpl @Inject constructor(
-    private val apiService: ApiService,
+    private val authService: AuthService,
     private val userPreferences: UserPreferences
 ) : UserRepo {
 
     override fun login(email: String, password: String): Flow<Resource<User>> = flow {
         emit(Resource.Loading())
         val authUser = tryRequest {
-            val response = apiService.login(LoginBody(email, password))
+            val response = authService.login(LoginBody(email, password))
             if (response.isSuccessful) {
                 val body = response.body()!!
+                Log.d("UserRepo", body.toString())
                 body.data!!
             } else {
                 emit(Resource.Error(WrongCredentialsException()))
@@ -43,7 +44,7 @@ class UserRepoImpl @Inject constructor(
         flow {
             emit(Resource.Loading())
             val result = tryRequest {
-                val response = apiService.signup(SignupBody(name, email, password))
+                val response = authService.signup(SignupBody(name, email, password))
                 if (response.isSuccessful) {
                     Unit
                 } else {
@@ -60,7 +61,7 @@ class UserRepoImpl @Inject constructor(
     override suspend fun logout() {
         try {
             userPreferences.clearToken()
-            apiService.logout()
+            authService.logout()
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -70,7 +71,7 @@ class UserRepoImpl @Inject constructor(
         emit(Resource.Loading())
         Log.d("UserRepo", "Getting Active User")
         val user = tryRequest {
-            val response = apiService.getActiveUser()
+            val response = authService.getActiveUser()
             Log.d("UserRepo", "$response")
             if (response.isSuccessful) {
                 val body = response.body()!!

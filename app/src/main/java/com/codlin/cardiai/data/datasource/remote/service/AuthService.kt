@@ -1,4 +1,4 @@
-package com.codlin.cardiai.data.datasource.remote
+package com.codlin.cardiai.data.datasource.remote.service
 
 import com.codlin.cardiai.data.datasource.remote.dto.auth.AuthUserDto
 import com.codlin.cardiai.data.datasource.remote.dto.auth.LoginBody
@@ -11,7 +11,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 
-interface ApiService {
+interface AuthService {
     @POST("login")
     suspend fun login(@Body body: LoginBody): Response<BaseResponse<AuthUserDto>>
 

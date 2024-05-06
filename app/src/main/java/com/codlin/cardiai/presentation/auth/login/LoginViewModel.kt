@@ -107,6 +107,12 @@ class LoginViewModel @Inject constructor(private val loginUsecase: LoginUsecase)
                                     screenError = "Can't connect to the server. Please try again later."
                                 )
                             }
+
+                            else -> _state.update {
+                                it.copy(
+                                    screenError = resource.exception?.message
+                                )
+                            }
                         }
                     }
 

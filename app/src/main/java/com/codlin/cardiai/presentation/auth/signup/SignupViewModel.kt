@@ -110,6 +110,12 @@ class SignupViewModel @Inject constructor(private val signupUsecase: SignupUseca
                                             nameError = "Name has to be at least 4 characters."
                                         )
                                     }
+
+                                    else -> _state.update {
+                                        it.copy(
+                                            screenError = resource.exception?.message
+                                        )
+                                    }
                                 }
                             }
 
