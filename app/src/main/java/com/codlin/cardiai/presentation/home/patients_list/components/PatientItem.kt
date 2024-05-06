@@ -34,8 +34,7 @@ fun PatientItem(patient: Patient, onClick: () -> Unit, modifier: Modifier = Modi
     ) {
         RecordIcon(
             result = patient.lastResult,
-            modifier = Modifier
-                .size(64.dp),
+            modifierBackground = Modifier.size(64.dp),
         )
         Spacer(modifier = Modifier.width(16.dp))
 

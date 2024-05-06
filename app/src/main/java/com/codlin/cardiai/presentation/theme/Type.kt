@@ -79,5 +79,19 @@ val Typography = Typography(
         lineHeight = 14.4.sp,
         fontFamily = OpenSansFontFamily,
         fontWeight = FontWeight.W400,
+    ),
+    //Heading 4
+    headlineLarge = TextStyle(
+        fontSize = 18.sp,
+        lineHeight = 21.6.sp,
+        fontFamily = OpenSansFontFamily,
+        fontWeight = FontWeight.W700,
+    ),
+    //Body Hilight Bold
+    titleMedium =TextStyle(
+        fontSize = 16.sp,
+        lineHeight = 19.2.sp,
+        fontFamily = OpenSansFontFamily,
+        fontWeight = FontWeight.W700,
     )
 )
