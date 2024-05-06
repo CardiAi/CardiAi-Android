@@ -3,7 +3,6 @@ package com.codlin.cardiai.presentation.home.patients_list
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -164,7 +163,6 @@ private fun PatientListContent(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize(),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(patients.itemCount) { index ->
@@ -172,7 +170,8 @@ private fun PatientListContent(
                         patient = patients[index]!!,
                         onClick = {
                             onEvent(PatientListEvent.OnPatientClicked(patients[index]!!))
-                        }
+                        },
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                     )
                 }
                 patients.apply {

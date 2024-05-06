@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
     private fun splashScreenSetup() {
         installSplashScreen().apply {
             setKeepOnScreenCondition {
-                viewModel.isAppReady.not()
+                !viewModel.isAppReady.value
             }
         }
     }
@@ -55,12 +55,14 @@ class MainActivity : ComponentActivity() {
                         ),
                     )
                 val hasActiveUser by viewModel.hasActiveUser.collectAsStateWithLifecycle()
-                val startRoute = if (hasActiveUser) NavGraphs.home else NavGraphs.auth
-                DestinationsNavHost(
-                    navGraph = NavGraphs.root,
-                    startRoute = startRoute,
-                    engine = navHostEngine
-                )
+                val isAppReady by viewModel.isAppReady.collectAsStateWithLifecycle()
+                if (isAppReady) {
+                    DestinationsNavHost(
+                        navGraph = NavGraphs.root,
+                        startRoute = if (hasActiveUser) NavGraphs.home else NavGraphs.auth,
+                        engine = navHostEngine
+                    )
+                }
             }
         }
     }

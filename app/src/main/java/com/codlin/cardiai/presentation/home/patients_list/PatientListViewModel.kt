@@ -83,7 +83,6 @@ class PatientListViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         searchQuery = event.query,
-                        screenError = null,
                     )
                 }
                 searchPatients(_state.value.searchQuery)

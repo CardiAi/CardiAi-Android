@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.codlin.cardiai.domain.model.Patient
+import com.codlin.cardiai.presentation.UIFormatter
 import com.codlin.cardiai.presentation.components.RecordIcon
 import com.codlin.cardiai.presentation.theme.CardiAiTheme
 import com.codlin.cardiai.presentation.theme.Neutrals1000
@@ -27,7 +28,9 @@ fun PatientItem(patient: Patient, onClick: () -> Unit, modifier: Modifier = Modi
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.clickable { onClick() }
+        modifier = Modifier
+            .clickable { onClick() }
+            .then(modifier)
     ) {
         RecordIcon(
             result = patient.lastResult,
@@ -48,7 +51,7 @@ fun PatientItem(patient: Patient, onClick: () -> Unit, modifier: Modifier = Modi
             )
 
             Text(
-                text = patient.lastResult?.toString() ?: "No records history.",
+                text = UIFormatter.formatRecordResult(patient.lastResult),
                 style = MaterialTheme.typography.bodySmall,
                 color = Neutrals900,
             )

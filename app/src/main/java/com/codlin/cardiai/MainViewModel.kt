@@ -17,13 +17,13 @@ class MainViewModel @Inject constructor(
     private val _hasActiveUser = MutableStateFlow(false)
     val hasActiveUser = _hasActiveUser.asStateFlow()
 
-    var isAppReady: Boolean = false
-        private set
+    private val _isAppReady = MutableStateFlow(false)
+    val isAppReady = _isAppReady.asStateFlow()
 
     init {
         viewModelScope.launch {
             _hasActiveUser.update { checkActiveUserUsecase() }
-            isAppReady = true
+            _isAppReady.update { true }
         }
     }
 }

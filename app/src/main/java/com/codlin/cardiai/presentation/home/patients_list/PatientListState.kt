@@ -3,11 +3,8 @@ package com.codlin.cardiai.presentation.home.patients_list
 import com.codlin.cardiai.domain.model.Patient
 
 data class PatientListState(
-    val isLoading: Boolean = false,
     val isMenuShown: Boolean = false,
     val searchQuery: String = "",
-    val screenError: String? = null,
-    val currentPage: Int = 1,
     val isSearchVisible: Boolean = false,
     val navDestination: PatientDestination? = null,
 )
