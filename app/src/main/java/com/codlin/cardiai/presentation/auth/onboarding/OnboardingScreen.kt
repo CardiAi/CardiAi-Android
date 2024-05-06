@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -34,9 +35,9 @@ fun OnboardingScreen(
     viewModel: OnboardingViewModel = hiltViewModel(),
     navigator: DestinationsNavigator,
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle()
-    LaunchedEffect(key1 = state.value) {
-        when (state.value.navDestination) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    LaunchedEffect(key1 = state) {
+        when (state.navDestination) {
             null -> return@LaunchedEffect
             OnboardingDestination.LoginDestination -> navigator.navigate(LoginScreenDestination)
             OnboardingDestination.SignupDestination -> navigator.navigate(SignupScreenDestination)

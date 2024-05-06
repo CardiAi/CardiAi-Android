@@ -57,8 +57,13 @@ class UserRepoImpl @Inject constructor(
             }
         }
 
-    override fun logout(): Resource<Unit> {
-        return Resource.Success(Unit)
+    override suspend fun logout() {
+        try {
+            userPreferences.clearToken()
+            apiService.logout()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     override fun getActiveUser(): Flow<Resource<User>> = flow {

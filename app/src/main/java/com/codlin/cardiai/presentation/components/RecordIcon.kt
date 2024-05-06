@@ -36,7 +36,7 @@ fun RecordIcon(result: Int?, modifier: Modifier = Modifier) {
 
         Image(
             painter = painterResource(id = resId),
-            contentDescription = "Heart Background",
+            contentDescription = if (result == 0) "Healthy" else "Degree $result",
         )
     }
 }

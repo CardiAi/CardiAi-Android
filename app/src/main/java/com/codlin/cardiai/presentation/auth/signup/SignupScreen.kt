@@ -18,6 +18,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,27 +49,27 @@ fun SignupScreen(
     viewModel: SignupViewModel = hiltViewModel(),
     navigator: DestinationsNavigator,
 ) {
-    val state = viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(key1 = state.value) {
-        state.value.navDestination?.let {
+    LaunchedEffect(key1 = state) {
+        state.navDestination?.let {
             navigator.navigate(LoginScreenDestination) {
                 popUpTo(NavGraphs.auth.startRoute) {
                     inclusive = false
                 }
             }
         }
-        state.value.screenError?.let { error ->
+        state.screenError?.let { error ->
             snackbarHostState.showSnackbar(error)
         }
-        state.value.nameError?.let { error ->
+        state.nameError?.let { error ->
             snackbarHostState.showSnackbar(error)
         }
-        state.value.emailError?.let { error ->
+        state.emailError?.let { error ->
             snackbarHostState.showSnackbar(error)
         }
-        state.value.passwordError?.let { error ->
+        state.passwordError?.let { error ->
             snackbarHostState.showSnackbar(error)
         }
         viewModel.resentEvent()
@@ -77,7 +78,7 @@ fun SignupScreen(
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) {
         SignupContent(
-            state = state.value,
+            state = state,
             onEvent = viewModel::onEvent,
             modifier = Modifier.padding(it)
         )

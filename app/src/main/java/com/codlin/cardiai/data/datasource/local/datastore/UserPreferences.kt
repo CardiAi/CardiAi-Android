@@ -21,6 +21,12 @@ class UserPreferences(private val context: Context) {
         }
     }
 
+    suspend fun clearToken() {
+        context.dataStore.edit { preferences ->
+            preferences.remove(accessTokenKey)
+        }
+    }
+
     suspend fun getUserToken(): String {
         val token =
             context.dataStore.data.first()[accessTokenKey] ?: throw Exception("Unauthorized")

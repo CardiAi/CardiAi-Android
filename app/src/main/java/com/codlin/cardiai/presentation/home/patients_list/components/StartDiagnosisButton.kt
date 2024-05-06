@@ -1,4 +1,4 @@
-package com.codlin.cardiai.presentation.home.patientsList.components
+package com.codlin.cardiai.presentation.home.patients_list.components
 
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon

@@ -21,4 +21,8 @@ interface ApiService {
     @GET("user")
     @Authenticated
     suspend fun getActiveUser(): Response<BaseResponse<UserDto>>
+
+    @POST("logout")
+    @Authenticated
+    suspend fun logout(): Response<BaseResponse<String>>
 }
