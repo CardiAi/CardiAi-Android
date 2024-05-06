@@ -48,7 +48,7 @@ fun PatientItem(patient: Patient, onClick: () -> Unit, modifier: Modifier = Modi
             )
 
             Text(
-                text = patient.lastResult.toString(),
+                text = patient.lastResult?.toString() ?: "No records history.",
                 style = MaterialTheme.typography.bodySmall,
                 color = Neutrals900,
             )

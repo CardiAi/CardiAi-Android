@@ -1,19 +1,19 @@
 package com.codlin.cardiai.domain.usecase.patients
 
+import androidx.paging.PagingData
 import com.codlin.cardiai.domain.model.Patient
 import com.codlin.cardiai.domain.repo.PatientRepo
-import com.codlin.cardiai.domain.util.Resource
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetPatientsUsecase @Inject constructor(
     private val patientRepo: PatientRepo
 ) {
-    operator fun invoke(page: Int, searchQuery: String? = null): Flow<Resource<List<Patient>>> {
+    operator fun invoke(searchQuery: String? = null): Flow<PagingData<Patient>> {
         return if (searchQuery.isNullOrBlank()) {
-            patientRepo.getPatients(page)
+            patientRepo.getPatients()
         } else {
-            patientRepo.getPatients(page, searchQuery)
+            patientRepo.getPatients(searchQuery)
         }
     }
 }

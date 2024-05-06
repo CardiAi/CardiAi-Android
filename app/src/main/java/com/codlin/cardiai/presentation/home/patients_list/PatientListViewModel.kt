@@ -2,16 +2,17 @@ package com.codlin.cardiai.presentation.home.patients_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.codlin.cardiai.domain.model.Patient
 import com.codlin.cardiai.domain.usecase.auth.LogoutUsecase
 import com.codlin.cardiai.domain.usecase.patients.GetPatientsUsecase
-import com.codlin.cardiai.domain.util.Resource
-import com.codlin.cardiai.domain.util.exception.CantConnectException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -24,6 +25,10 @@ class PatientListViewModel @Inject constructor(
     private val _state = MutableStateFlow(PatientListState())
     val state = _state.asStateFlow()
 
+    private val _patients: MutableStateFlow<PagingData<Patient>> =
+        MutableStateFlow(PagingData.empty())
+    val patients = _patients.asStateFlow()
+
     private var searchJob: Job? = null
 
     init {
@@ -31,50 +36,14 @@ class PatientListViewModel @Inject constructor(
     }
 
     private suspend fun getPatients(query: String? = null) {
-        getPatientsUsecase(_state.value.currentPage, query?.trim()).collectLatest { resource ->
-            when (resource) {
-                is Resource.Error -> {
-                    resource.exception?.printStackTrace()
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                        )
-                    }
-                    when (resource.exception) {
-                        is CantConnectException -> _state.update {
-                            it.copy(
-                                screenError = "Can't connect to the server. please try again later."
-                            )
-                        }
-
-                        else -> _state.update {
-                            it.copy(
-                                screenError = resource.exception?.message
-                            )
-                        }
-                    }
-                }
-
-                is Resource.Loading -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = true,
-                            screenError = null,
-                        )
-                    }
-                }
-
-                is Resource.Success -> {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            patients = resource.data,
-                            screenError = null,
-                        )
-                    }
+        getPatientsUsecase(query)
+            .distinctUntilChanged()
+            .cachedIn(viewModelScope)
+            .collect { patients ->
+                _patients.update {
+                    patients
                 }
             }
-        }
     }
 
     fun onEvent(event: PatientListEvent) {
