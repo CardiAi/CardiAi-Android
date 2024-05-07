@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +34,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.codlin.cardiai.R
 import com.codlin.cardiai.domain.model.Gender
 import com.codlin.cardiai.domain.model.Patient
+import com.codlin.cardiai.presentation.UIFormatter
 import com.codlin.cardiai.presentation.components.RecordIcon
 import com.codlin.cardiai.presentation.home.patients_list.components.StartDiagnosisButton
 import com.codlin.cardiai.presentation.navigation.HomeNavGraph
@@ -61,7 +63,7 @@ private fun PatientDetailsContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "") },
+                title = {},
                 navigationIcon = {
                     IconButton(onClick = { onEvent(PatientDetailsEvent.OnBackClicked) }) {
                         Icon(
@@ -88,14 +90,14 @@ private fun PatientDetailsContent(
             )
         },
         floatingActionButton = {
-            StartDiagnosisButton { onEvent(PatientDetailsEvent.OnStartDiagnosisClicked) }
+            StartDiagnosisButton({ onEvent(PatientDetailsEvent.OnStartDiagnosisClicked) })
         }
     ) { paddingValue ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValue)
-                .padding(8.dp),
+                .padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -104,7 +106,7 @@ private fun PatientDetailsContent(
                 horizontalArrangement = Arrangement.Start,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp)
+                    .padding(horizontal = 8.dp)
             ) {
                 RecordIcon(
                     result = patient.lastResult,
@@ -133,20 +135,20 @@ private fun PatientDetailsContent(
                         )
                         Spacer(modifier = Modifier.width(24.dp))
                         Text(
-                            text = patient.gender.toString().lowercase()
-                                .replaceFirstChar { it.uppercaseChar() },
+                            text = patient.gender.toString(),
                             style = MaterialTheme.typography.displayMedium,
                             color = Color.Black,
                         )
                     }
                     Text(
-                        text = patient.lastResult.toString(),
+                        text = UIFormatter.formatRecordResult(patient.lastResult),
                         style = MaterialTheme.typography.headlineLarge,
                         color = Color.Black,
                         modifier = Modifier.padding(vertical = 4.dp)
                     )
                 }
             }
+            Spacer(modifier = Modifier.height(8.dp))
             HorizontalDivider(
                 modifier = Modifier
                     .weight(1f)
@@ -169,7 +171,7 @@ private fun PatientDetailsPreview() {
             patient = Patient(
                 name = "Kareem Sayed",
                 age = 16,
-                gender = Gender.MALE,
+                gender = Gender.Male,
                 lastResult = 2,
             ),
             onEvent = {}
