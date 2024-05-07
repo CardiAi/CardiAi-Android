@@ -170,6 +170,7 @@ private fun PatientListContent(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                 )
             },
+            lazyListState = listState,
         ) { patient ->
             PatientItem(
                 patient = patient,

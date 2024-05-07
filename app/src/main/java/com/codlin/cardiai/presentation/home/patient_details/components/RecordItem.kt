@@ -3,7 +3,6 @@ package com.codlin.cardiai.presentation.home.patient_details.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -14,20 +13,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.codlin.cardiai.domain.model.Patient
+import com.codlin.cardiai.presentation.UIFormatter
 import com.codlin.cardiai.presentation.components.RecordIcon
-import com.codlin.cardiai.presentation.home.patient_details.PatientDetailsEvent
 import com.codlin.cardiai.presentation.theme.CardiAiTheme
 import com.codlin.cardiai.presentation.theme.Neutrals1000
 import com.codlin.cardiai.presentation.theme.Neutrals900
 
 @Composable
-fun RecordItem(patient: Patient) {
+fun RecordItem(patient: Patient, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .fillMaxWidth()
-            .clickable { PatientDetailsEvent.OnCardClicked }
+            .clickable(onClick = onClick)
+            .then(modifier)
     ) {
         RecordIcon(
             result = patient.lastResult,
@@ -43,7 +42,7 @@ fun RecordItem(patient: Patient) {
                     .weight(1f)
             )
             Text(
-                text = patient.lastResult.toString(),
+                text = UIFormatter.formatRecordResult(patient.lastResult),
                 style = MaterialTheme.typography.displayMedium,
                 color = Neutrals900
             )
@@ -55,9 +54,12 @@ fun RecordItem(patient: Patient) {
 @Preview(showBackground = true)
 private fun RecordItemPreview() {
     CardiAiTheme {
-        RecordItem(patient = Patient(
-            lastResult = 2,
-            lastRecordDate = "7/5/2024",
-        ))
+        RecordItem(
+            patient = Patient(
+                lastResult = 2,
+                lastRecordDate = "7/5/2024",
+            ),
+            onClick = {}
+        )
     }
 }
