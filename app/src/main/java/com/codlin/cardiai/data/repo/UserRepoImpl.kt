@@ -1,6 +1,5 @@
 package com.codlin.cardiai.data.repo
 
-import android.util.Log
 import com.codlin.cardiai.data.datasource.local.datastore.UserPreferences
 import com.codlin.cardiai.data.datasource.remote.dto.auth.LoginBody
 import com.codlin.cardiai.data.datasource.remote.dto.auth.SignupBody
@@ -14,12 +13,16 @@ import com.codlin.cardiai.domain.util.exception.UnauthorizedException
 import com.codlin.cardiai.domain.util.exception.WrongCredentialsException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 import javax.inject.Inject
 
 class UserRepoImpl @Inject constructor(
     private val authService: AuthService,
     private val userPreferences: UserPreferences
 ) : UserRepo {
+    init {
+        Timber.tag("UserRepo")
+    }
 
     override fun login(email: String, password: String): Flow<Resource<User>> = flow {
         emit(Resource.Loading())
@@ -27,7 +30,7 @@ class UserRepoImpl @Inject constructor(
             val response = authService.login(LoginBody(email, password))
             if (response.isSuccessful) {
                 val body = response.body()!!
-                Log.d("UserRepo", body.toString())
+                Timber.d(body.toString())
                 body.data!!
             } else {
                 emit(Resource.Error(WrongCredentialsException()))
@@ -48,7 +51,7 @@ class UserRepoImpl @Inject constructor(
                 if (response.isSuccessful) {
                     Unit
                 } else {
-                    Log.e("UserRepo", "Request Failed")
+                    Timber.e("Request Failed")
                     emit(Resource.Error(EmailTakenException()))
                     null
                 }
@@ -69,20 +72,20 @@ class UserRepoImpl @Inject constructor(
 
     override fun getActiveUser(): Flow<Resource<User>> = flow {
         emit(Resource.Loading())
-        Log.d("UserRepo", "Getting Active User")
+        Timber.d("Getting Active User")
         val user = tryRequest {
             val response = authService.getActiveUser()
-            Log.d("UserRepo", "$response")
+            Timber.d("$response")
             if (response.isSuccessful) {
                 val body = response.body()!!
-                Log.d("UserRepo", body.data.toString())
+                Timber.d(body.data.toString())
                 body.data!!.toDomainModel()
             } else {
                 emit(Resource.Error(UnauthorizedException()))
                 null
             }
         }
-        Log.d("UserRepo", "Got user: $user")
+        Timber.d("Got user: $user")
         emit(Resource.Success(user))
     }
 }

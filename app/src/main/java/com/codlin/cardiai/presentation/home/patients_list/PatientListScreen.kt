@@ -7,6 +7,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
@@ -77,7 +78,7 @@ fun PatientListScreen(
                     navigator.navigate(PatientDetailsScreenDestination(destination.patient))
                 }
 
-                PatientsListDestination.NavigateUp -> navigator.navigateUp()
+                PatientsListDestination.NavigateUp -> navigator.popBackStack()
             }
         }
         viewModel.resetEvents()
@@ -179,6 +180,9 @@ private fun PatientListContent(
                 visible = state.selectedId != null,
                 enter = slideInVertically(initialOffsetY = { it / 2 }),
                 exit = slideOutVertically(targetOffsetY = { it / 2 }),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp)
             ) {
                 state.selectedId?.let {
                     ConfirmSelectionButton(

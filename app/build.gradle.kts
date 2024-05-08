@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.hilt)
     kotlin("kapt")
     alias(libs.plugins.ksp)
+//    alias(libs.plugins.googleServices)
+//    alias(libs.plugins.firebaseCrashlytics)
 }
 
 val localPropertiesFile = rootProject.file("local.properties")
@@ -37,13 +39,16 @@ android {
         debug {
             buildConfigField("String", "userEmail", userEmail)
             buildConfigField("String", "userPass", userPass)
+            isDebuggable = true
         }
 
         release {
+            isDebuggable = false
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -121,3 +126,15 @@ dependencies {
     implementation(libs.paging.compose)
     implementation(libs.paging.runtime)
 }
+
+// Logging
+dependencies {
+    implementation(libs.timber)
+}
+
+// Firebase
+//dependencies {
+//    implementation(platform(libs.firebase.bom))
+//    implementation(libs.firebase.crashlytics)
+//    implementation(libs.firebase.analytics)
+//}
