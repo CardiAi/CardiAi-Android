@@ -54,21 +54,44 @@ class PatientListViewModel @Inject constructor(
                 }
                 _state.update {
                     it.copy(
-                        navDestination = PatientDestination.AuthDestination
+                        navDestination = PatientsListDestination.AuthDestination
                     )
                 }
             }
 
             is PatientListEvent.OnPatientClicked -> {
-                _state.update {
-                    it.copy(
-                        navDestination = PatientDestination.PatientDetailsDestination(event.patient)
-                    )
+                if (state.value.inSelectMode) {
+                    if (_state.value.selectedId == event.patient.id) {
+                        _state.update {
+                            it.copy(
+                                selectedId = null
+                            )
+                        }
+                    } else {
+                        _state.update {
+                            it.copy(
+                                selectedId = event.patient.id
+                            )
+                        }
+                    }
+                } else {
+                    _state.update {
+                        it.copy(
+                            navDestination = PatientsListDestination.PatientsListDetailsDestination(
+                                event.patient
+                            )
+                        )
+                    }
                 }
             }
 
             PatientListEvent.OnStartDiagnosisClicked -> {
-                TODO()
+                _state.update {
+                    it.copy(
+                        inSelectMode = true,
+                        isSearchVisible = true,
+                    )
+                }
             }
 
             PatientListEvent.ToggleMenu -> {
@@ -104,6 +127,38 @@ class PatientListViewModel @Inject constructor(
                 _state.value.searchQuery,
                 isInstant = true
             )
+
+            PatientListEvent.OnBackClicked -> {
+                if (state.value.inSelectMode) {
+                    _state.update {
+                        it.copy(
+                            inSelectMode = false,
+                            isSearchVisible = false,
+                            selectedId = null,
+                        )
+                    }
+                } else if (state.value.isSearchVisible) {
+                    _state.update {
+                        it.copy(
+                            isSearchVisible = false,
+                        )
+                    }
+                } else {
+                    _state.update {
+                        it.copy(
+                            navDestination = PatientsListDestination.NavigateUp
+                        )
+                    }
+                }
+            }
+
+            PatientListEvent.OnAddPatientClicked -> {
+                TODO()
+            }
+
+            PatientListEvent.OnContinueClicked -> {
+                TODO()
+            }
         }
     }
 

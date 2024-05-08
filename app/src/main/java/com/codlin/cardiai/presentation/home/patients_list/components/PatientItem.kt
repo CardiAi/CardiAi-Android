@@ -1,5 +1,6 @@
 package com.codlin.cardiai.presentation.home.patients_list.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,13 +24,18 @@ import com.codlin.cardiai.presentation.theme.Neutrals800
 import com.codlin.cardiai.presentation.theme.Neutrals900
 
 @Composable
-fun PatientItem(patient: Patient, onClick: () -> Unit, modifier: Modifier = Modifier) {
-
+fun PatientItem(
+    patient: Patient,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    selected: Boolean = false,
+) {
     Row(
         horizontalArrangement = Arrangement.Start,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .clickable { onClick() }
+            .background(if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.background)
             .then(modifier)
     ) {
         RecordIcon(

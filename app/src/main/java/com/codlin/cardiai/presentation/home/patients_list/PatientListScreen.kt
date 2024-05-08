@@ -1,6 +1,10 @@
 package com.codlin.cardiai.presentation.home.patients_list
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -35,6 +39,8 @@ import com.codlin.cardiai.presentation.components.SearchField
 import com.codlin.cardiai.presentation.components.isScrollingUp
 import com.codlin.cardiai.presentation.destinations.PatientDetailsScreenDestination
 import com.codlin.cardiai.presentation.home.components.PaginationLazyColumn
+import com.codlin.cardiai.presentation.home.patients_list.components.AddPatientButton
+import com.codlin.cardiai.presentation.home.patients_list.components.ConfirmSelectionButton
 import com.codlin.cardiai.presentation.home.patients_list.components.PatientItem
 import com.codlin.cardiai.presentation.home.patients_list.components.StartDiagnosisButton
 import com.codlin.cardiai.presentation.navigation.HomeNavGraph
@@ -52,10 +58,14 @@ fun PatientListScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val patients = viewModel.patients.collectAsLazyPagingItems()
 
+    BackHandler {
+        viewModel.onEvent(PatientListEvent.OnBackClicked)
+    }
+
     LaunchedEffect(key1 = state) {
         state.navDestination?.let { destination ->
             when (destination) {
-                PatientDestination.AuthDestination -> {
+                PatientsListDestination.AuthDestination -> {
                     navigator.navigate(NavGraphs.auth) {
                         popUpTo(NavGraphs.home) {
                             inclusive = true
@@ -63,13 +73,11 @@ fun PatientListScreen(
                     }
                 }
 
-                is PatientDestination.PatientDetailsDestination -> {
+                is PatientsListDestination.PatientsListDetailsDestination -> {
                     navigator.navigate(PatientDetailsScreenDestination(destination.patient))
                 }
 
-                PatientDestination.StartDiagnosisDestination -> {
-                    TODO()
-                }
+                PatientsListDestination.NavigateUp -> navigator.navigateUp()
             }
         }
         viewModel.resetEvents()
@@ -105,7 +113,8 @@ private fun PatientListContent(
                         onSearchClicked = { onEvent(PatientListEvent.InstantSearch) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
+                            .padding(horizontal = 16.dp),
+                        cancelable = !state.inSelectMode,
                     )
                 else
                     TopAppBar(
@@ -149,12 +158,34 @@ private fun PatientListContent(
             }
         },
         floatingActionButton = {
-            StartDiagnosisButton(
-                expanded = listState.isScrollingUp(),
-                onClick = {
-                    onEvent(PatientListEvent.OnStartDiagnosisClicked)
-                },
-            )
+            AnimatedContent(targetState = state.inSelectMode, label = "FABChange") {
+                if (it) {
+                    AddPatientButton(
+                        expanded = listState.isScrollingUp(),
+                        onClick = { onEvent(PatientListEvent.OnAddPatientClicked) }
+                    )
+                } else {
+                    StartDiagnosisButton(
+                        expanded = listState.isScrollingUp(),
+                        onClick = {
+                            onEvent(PatientListEvent.OnStartDiagnosisClicked)
+                        },
+                    )
+                }
+            }
+        },
+        bottomBar = {
+            AnimatedVisibility(
+                visible = state.selectedId != null,
+                enter = slideInVertically(initialOffsetY = { it / 2 }),
+                exit = slideOutVertically(targetOffsetY = { it / 2 }),
+            ) {
+                state.selectedId?.let {
+                    ConfirmSelectionButton(
+                        onClick = { onEvent(PatientListEvent.OnContinueClicked) },
+                    )
+                }
+            }
         },
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
     ) { paddingValues ->
@@ -177,7 +208,8 @@ private fun PatientListContent(
                 onClick = {
                     onEvent(PatientListEvent.OnPatientClicked(patient))
                 },
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                selected = patient.id == state.selectedId,
             )
         }
     }

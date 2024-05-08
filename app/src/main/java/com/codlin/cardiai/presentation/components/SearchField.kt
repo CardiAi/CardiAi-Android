@@ -33,7 +33,8 @@ fun SearchField(
     onQueryChange: (String) -> Unit,
     onCancelClicked: () -> Unit,
     onSearchClicked: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    cancelable: Boolean = true,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     OutlinedTextField(
@@ -69,12 +70,14 @@ fun SearchField(
             )
         },
         trailingIcon = {
-            IconButton(onClick = onCancelClicked) {
-                Icon(
-                    imageVector = Icons.Outlined.Cancel,
-                    contentDescription = "Cancel",
-                    tint = Primary1000
-                )
+            if (cancelable) {
+                IconButton(onClick = onCancelClicked) {
+                    Icon(
+                        imageVector = Icons.Outlined.Cancel,
+                        contentDescription = "Cancel",
+                        tint = Primary1000
+                    )
+                }
             }
         },
         keyboardActions = KeyboardActions(
