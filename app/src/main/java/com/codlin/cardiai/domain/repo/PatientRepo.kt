@@ -10,5 +10,5 @@ interface PatientRepo {
     fun getPatients(searchQuery: String? = null): Flow<PagingData<Patient>>
     fun addPatient(name: String, age: Int, gender: Gender): Flow<Resource<Patient>>
     fun editPatient(patient: Patient): Flow<Resource<Patient>>
-    fun deletePatient(): Flow<Resource<Unit>>
+    fun deletePatient(patientId: Int): Flow<Resource<String>>
 }

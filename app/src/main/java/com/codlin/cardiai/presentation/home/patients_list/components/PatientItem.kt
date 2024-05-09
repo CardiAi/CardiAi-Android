@@ -44,7 +44,7 @@ fun PatientItem(patient: Patient, onClick: () -> Unit, modifier: Modifier = Modi
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = patient.name,
+                text = patient.name!!,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Neutrals1000,
             )

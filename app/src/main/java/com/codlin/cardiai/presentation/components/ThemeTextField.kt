@@ -8,6 +8,7 @@ import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material.icons.outlined.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
+import com.codlin.cardiai.presentation.theme.LabelOutlineText
 
 @Composable
 fun ThemeTextField(
@@ -32,7 +34,11 @@ fun ThemeTextField(
         value = value,
         onValueChange = onValueChange,
         label = {
-            Text(text = label)
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyLarge,
+                color = LabelOutlineText
+            )
         },
         shape = RoundedCornerShape(4.dp),
         keyboardOptions = keyboardOptions,
@@ -56,7 +62,11 @@ fun ThemePasswordField(
         value = value,
         onValueChange = onValueChange,
         label = {
-            Text(text = "Password")
+            Text(
+                text = "Password",
+                style = MaterialTheme.typography.bodyLarge,
+                color = LabelOutlineText
+            )
         },
         shape = RoundedCornerShape(4.dp),
         trailingIcon = {
