@@ -11,10 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import com.codlin.cardiai.presentation.new_record.NumericQuestion
-import com.codlin.cardiai.presentation.theme.CardiAiTheme
 
 @Composable
 fun NumericalQuestionItem(
@@ -29,19 +28,21 @@ fun NumericalQuestionItem(
     ) {
         Text(text = question.title, style = MaterialTheme.typography.bodyMedium)
         TextField(
-            value = question.answer?.toString() ?: "",
-            onValueChange = onValueChange,
+            value = question.answer ?: "",
+            onValueChange = {
+                if (
+                    it.isEmpty() ||
+                    (question.isDecimal && it.matches(Regex("^\\d*\\.?\\d*\$"))) ||
+                    (!question.isDecimal && it.isDigitsOnly())
+                ) {
+                    onValueChange(it)
+                }
+            },
             placeholder = { Text(question.placeholder) },
             suffix = { question.unit?.let { Text(text = it) } },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
         )
-    }
-}
-
-@Preview
-@Composable
-private fun NumericalQuestionPreview() {
-    CardiAiTheme {
     }
 }

@@ -25,7 +25,7 @@ data class RecordDto(
     val thal: String,
     val result: Int?,
     @SerializedName("created_at")
-    val createdAt: Long?,
+    val createdAt: String?,
 ) {
     fun toDomainModel(): Record =
         Record(
