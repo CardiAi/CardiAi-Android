@@ -1,5 +1,6 @@
 package com.codlin.cardiai.data.datasource.remote.dto.records
 
+import com.codlin.cardiai.domain.model.Patient
 import com.codlin.cardiai.domain.model.record.Record
 import com.google.gson.annotations.SerializedName
 
@@ -26,6 +27,7 @@ data class RecordDto(
     val result: Int?,
     @SerializedName("created_at")
     val createdAt: String?,
+    val patient: Patient?,
 ) {
     fun toDomainModel(): Record =
         Record(
@@ -43,6 +45,8 @@ data class RecordDto(
             thal = stringToThal(thal),
             result = result,
             createdAt = createdAt,
+            patientId = patient?.id,
+            patientName = patient?.name,
         )
 
     companion object {
@@ -62,6 +66,7 @@ data class RecordDto(
                 thal = thal.name.replaceUnderscoreWithSpace(),
                 result = result,
                 createdAt = createdAt,
+                patient = null
             )
         }
     }

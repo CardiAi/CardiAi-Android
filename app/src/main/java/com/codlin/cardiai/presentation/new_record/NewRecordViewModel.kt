@@ -1,17 +1,30 @@
 package com.codlin.cardiai.presentation.new_record
 
 import androidx.lifecycle.ViewModel
+import com.codlin.cardiai.domain.model.record.ChestPain
+import com.codlin.cardiai.domain.model.record.ECG
 import com.codlin.cardiai.domain.model.record.Record
-import com.codlin.cardiai.domain.model.record.RecordType
+import com.codlin.cardiai.domain.model.record.Slope
+import com.codlin.cardiai.domain.model.record.Thal
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import javax.inject.Inject
 
 
-@HiltViewModel
-class NewRecordViewModel @Inject constructor() : ViewModel() {
+@HiltViewModel(assistedFactory = NewRecordViewModel.NewRecordViewModelFactory::class)
+class NewRecordViewModel @AssistedInject constructor(
+    @Assisted private val patientId: Int,
+) : ViewModel() {
+
+    @AssistedFactory
+    interface NewRecordViewModelFactory {
+        fun create(patientId: Int): NewRecordViewModel
+    }
+
     private val _state = MutableStateFlow(NewRecordState())
     val state = _state.asStateFlow()
 
@@ -67,10 +80,10 @@ class NewRecordViewModel @Inject constructor() : ViewModel() {
                 val record = _state.value.let {
                     Record(
                         id = null,
-                        chestPain = it.questions[0].answer as RecordType.ChestPain,
-                        ecg = it.questions[1].answer as RecordType.ECG,
-                        slope = it.questions[2].answer as RecordType.Slope,
-                        thal = it.questions[3].answer as RecordType.Thal,
+                        chestPain = it.questions[0].answer as ChestPain,
+                        ecg = it.questions[1].answer as ECG,
+                        slope = it.questions[2].answer as Slope,
+                        thal = it.questions[3].answer as Thal,
                         exerciseAngina = (it.questions[4].answer as String) == "Yes",
                         bloodPressure = it.numericalQuestions[0].answer?.toInt(),
                         cholesterol = it.numericalQuestions[1].answer?.toInt(),
@@ -80,6 +93,7 @@ class NewRecordViewModel @Inject constructor() : ViewModel() {
                         oldPeak = it.numericalQuestions[5].answer!!.toDouble(),
                         result = null,
                         createdAt = null,
+                        patientId = patientId
                     )
                 }
 
