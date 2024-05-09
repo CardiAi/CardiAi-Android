@@ -1,4 +1,4 @@
-package com.codlin.cardiai.presentation.home.patient_details
+package com.codlin.cardiai.presentation.home.record_details
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,44 +23,43 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.codlin.cardiai.R
-import com.codlin.cardiai.domain.model.Gender
 import com.codlin.cardiai.domain.model.Patient
+import com.codlin.cardiai.domain.model.record.Record
 import com.codlin.cardiai.presentation.UIFormatter
 import com.codlin.cardiai.presentation.components.RecordIcon
-import com.codlin.cardiai.presentation.home.patients_list.components.StartDiagnosisButton
+import com.codlin.cardiai.presentation.home.record_details.components.RecordValueItem
 import com.codlin.cardiai.presentation.navigation.HomeNavGraph
-import com.codlin.cardiai.presentation.theme.CardiAiTheme
 import com.codlin.cardiai.presentation.theme.Neutral500
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
+
 @HomeNavGraph
-@Destination(navArgsDelegate = Patient::class)
+@Destination
 @Composable
-fun PatientDetailsScreen(
-    viewModel: PatientDetailsViewModel = hiltViewModel(),
-    navigator: DestinationsNavigator,
-    patient: Patient,
+fun RecordDetailsScreen(
+    viewModel: RecordDetailsViewModel = hiltViewModel(),
+    navigator: DestinationsNavigator
 ) {
-    //PatientDetailsContent(patient = patient)
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PatientDetailsContent(
+private fun RecordDetailsContent(
     patient: Patient,
-    onEvent: (PatientDetailsEvent) -> Unit
+    record: Record,
+    onEvent: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {},
                 navigationIcon = {
-                    IconButton(onClick = { onEvent(PatientDetailsEvent.OnBackClicked) }) {
+                    IconButton(onClick = { onEvent() }) {
                         Icon(
                             painter = painterResource(id = R.drawable.arrow_back),
                             contentDescription = "Arrow Back Icon",
@@ -69,14 +67,7 @@ private fun PatientDetailsContent(
                     }
                 },
                 actions = {
-
-                    IconButton(onClick = { onEvent(PatientDetailsEvent.OnEditClicked) }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.edit_icon),
-                            contentDescription = "Arrow Back Icon",
-                        )
-                    }
-                    IconButton(onClick = { onEvent(PatientDetailsEvent.OnDeleteClicked) }) {
+                    IconButton(onClick = { onEvent() }) {
                         Icon(
                             painter = painterResource(id = R.drawable.delete_icon),
                             contentDescription = "Arrow Back Icon",
@@ -84,9 +75,6 @@ private fun PatientDetailsContent(
                     }
                 }
             )
-        },
-        floatingActionButton = {
-            StartDiagnosisButton({ onEvent(PatientDetailsEvent.OnStartDiagnosisClicked) })
         }
     ) { paddingValue ->
         Column(
@@ -105,7 +93,7 @@ private fun PatientDetailsContent(
                     .padding(horizontal = 8.dp)
             ) {
                 RecordIcon(
-                    result = patient.lastResult,
+                    result = record.result,
                     modifierBackground = Modifier.size(98.dp),
                     modifierHeart = Modifier.size(49.dp)
                 )
@@ -122,56 +110,46 @@ private fun PatientDetailsContent(
                     )
                     Row(
                         horizontalArrangement = Arrangement.Start,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(vertical = 4.dp)
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = "${patient.age} years old",
-                            style = MaterialTheme.typography.displayMedium,
+                            text = UIFormatter.formatRecordResult(record.result),
+                            style = MaterialTheme.typography.headlineLarge,
                             color = Color.Black,
+                            modifier = Modifier.padding(vertical = 4.dp)
                         )
-                        Spacer(modifier = Modifier.width(24.dp))
+                        Spacer(modifier = Modifier.width(80.dp))
                         Text(
-                            text = patient.gender.toString(),
-                            style = MaterialTheme.typography.displayMedium,
+                            text = record.createdAt ?: "",
+                            style = MaterialTheme.typography.titleSmall,
                             color = Color.Black,
                         )
                     }
-                    Text(
-                        text = UIFormatter.formatRecordResult(patient.lastResult),
-                        style = MaterialTheme.typography.headlineLarge,
-                        color = Color.Black,
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
                 }
             }
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(vertical = 8.dp),
+                modifier = Modifier.weight(1f),
                 color = Neutral500,
             )
-            LazyColumn {
-
+            Spacer(modifier = Modifier.height(24.dp))
+            for (prop in record.javaClass.declaredFields) {
+                prop.get(record)?.let { RecordValueItem(name = prop.name, value = it.toString()) }
             }
         }
     }
 }
 
-
-@Composable
-@Preview(showBackground = true)
-private fun PatientDetailsPreview() {
-    CardiAiTheme {
-        PatientDetailsContent(
-            patient = Patient(
-                name = "Kareem Sayed",
-                age = 16,
-                gender = Gender.Male,
-                lastResult = 2,
-            ),
-            onEvent = {}
-        )
-    }
-}
+//@Composable
+//@Preview(showBackground = true)
+//private fun DiagnosisDetailsScreenPreview() {
+//    CardiAiTheme {
+//        RecordDetailsContent(
+//            patient = Patient(
+//                name = "Kareem Sayed",
+//                lastResult = 2,
+//                lastRecordDate = "10/5/2024"
+//            ),
+//            onEvent = {})
+//    }
+//}

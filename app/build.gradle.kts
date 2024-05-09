@@ -94,6 +94,7 @@ dependencies {
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.extended.icons)
     implementation(libs.splashscreen)
+    implementation(kotlin("reflect"))
 }
 
 // Hilt Dependency Injection

@@ -87,11 +87,25 @@ val Typography = Typography(
         fontFamily = OpenSansFontFamily,
         fontWeight = FontWeight.W700,
     ),
-    //Body Hilight Bold
-    titleMedium =TextStyle(
+    //Highlight Bold
+    titleMedium = TextStyle(
         fontSize = 16.sp,
         lineHeight = 19.2.sp,
         fontFamily = OpenSansFontFamily,
         fontWeight = FontWeight.W700,
-    )
+    ),
+    //Heading 1
+    titleLarge = TextStyle(
+        fontSize = 28.sp,
+        lineHeight = 33.6.sp,
+        fontFamily = OpenSansFontFamily,
+        fontWeight = FontWeight.W700,
+    ),
+    //Highlight Standard
+    titleSmall = TextStyle(
+        fontSize = 16.sp,
+        lineHeight = 19.2.sp,
+        fontFamily = OpenSansFontFamily,
+        fontWeight = FontWeight.W400,
+        )
 )

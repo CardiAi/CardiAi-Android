@@ -14,5 +14,5 @@ data class Record(
     val coronaryArtery: Int,
     val thal: RecordType.Thal,
     val result: Int?,
-    val createdAt: Long?,
+    val createdAt: String?,
 )
