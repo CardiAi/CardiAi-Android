@@ -157,7 +157,11 @@ class PatientListViewModel @Inject constructor(
             }
 
             PatientListEvent.OnContinueClicked -> {
-                TODO()
+                _state.update {
+                    it.copy(
+                        navDestination = PatientsListDestination.NewRecordDestination(_state.value.selectedId!!)
+                    )
+                }
             }
         }
     }

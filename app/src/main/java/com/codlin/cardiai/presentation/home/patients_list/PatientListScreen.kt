@@ -38,6 +38,7 @@ import com.codlin.cardiai.domain.model.Patient
 import com.codlin.cardiai.presentation.NavGraphs
 import com.codlin.cardiai.presentation.components.SearchField
 import com.codlin.cardiai.presentation.components.isScrollingUp
+import com.codlin.cardiai.presentation.destinations.NewRecordScreenDestination
 import com.codlin.cardiai.presentation.destinations.PatientDetailsScreenDestination
 import com.codlin.cardiai.presentation.home.components.PaginationLazyColumn
 import com.codlin.cardiai.presentation.home.patients_list.components.AddPatientButton
@@ -79,6 +80,9 @@ fun PatientListScreen(
                 }
 
                 PatientsListDestination.NavigateUp -> navigator.popBackStack()
+                is PatientsListDestination.NewRecordDestination -> navigator.navigate(
+                    NewRecordScreenDestination(destination.patientId)
+                )
             }
         }
         viewModel.resetEvents()

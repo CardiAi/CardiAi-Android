@@ -1,7 +1,7 @@
 package com.codlin.cardiai.presentation.home.patient_details
 
 import com.codlin.cardiai.domain.model.Patient
-import com.codlin.cardiai.domain.model.Record
+import com.codlin.cardiai.domain.model.record.Record
 
 data class PatientDetailsState(
     val patient: Patient = Patient(),
