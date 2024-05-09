@@ -1,11 +1,22 @@
 package com.codlin.cardiai.presentation.new_record
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.codlin.cardiai.R
@@ -25,22 +36,63 @@ fun NewRecordScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    NewRecordContent(state = state, onEvent = viewModel::onEvent)
+    BackHandler {
+        viewModel.onEvent(NewRecordEvent.OnBackClicked)
+    }
+
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(key1 = state) {
+        state.navDestination?.let {
+            when (it) {
+                is NewRecordDestination.RecordResultsDestination -> {
+
+                }
+
+                NewRecordDestination.NavigateUp -> navigator.popBackStack()
+            }
+        }
+        state.screenError?.let {
+            snackBarHostState.showSnackbar(it)
+        }
+        viewModel.resetEvents()
+    }
+
+
+    Scaffold(snackbarHost = { SnackbarHost(hostState = snackBarHostState) }) {
+        NewRecordContent(
+            state = state,
+            onEvent = viewModel::onEvent,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        )
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun NewRecordContent(
     state: NewRecordState,
-    onEvent: (NewRecordEvent) -> Unit
+    onEvent: (NewRecordEvent) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val pagerState = rememberPagerState {
         state.questions.size + 1
     }
     LaunchedEffect(key1 = state.currentPageIndex) {
-        pagerState.animateScrollToPage(state.currentPageIndex)
+        pagerState.animateScrollToPage(
+            state.currentPageIndex,
+            animationSpec = tween(delayMillis = 700)
+        )
     }
-    HorizontalPager(state = pagerState) { page ->
+    HorizontalPager(
+        state = pagerState,
+        modifier = modifier,
+        contentPadding = PaddingValues(24.dp),
+        userScrollEnabled = false,
+        pageSpacing = 24.dp,
+    ) { page ->
         if (page < 5) {
             MCQuestion(
                 question = state.questions[page],
