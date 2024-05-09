@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.codlin.cardiai.R
+import com.codlin.cardiai.presentation.destinations.RecordResultScreenDestination
 import com.codlin.cardiai.presentation.navigation.HomeNavGraph
 import com.codlin.cardiai.presentation.new_record.components.MCQuestion
 import com.codlin.cardiai.presentation.new_record.components.NumericalQuestionsPage
@@ -30,10 +31,14 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Destination
 @Composable
 fun NewRecordScreen(
-    viewModel: NewRecordViewModel = hiltViewModel(),
     navigator: DestinationsNavigator,
     patientId: Int,
 ) {
+    val viewModel: NewRecordViewModel =
+        hiltViewModel<NewRecordViewModel, NewRecordViewModel.NewRecordViewModelFactory> {
+            it.create(patientId)
+        }
+
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     BackHandler {
@@ -45,9 +50,9 @@ fun NewRecordScreen(
     LaunchedEffect(key1 = state) {
         state.navDestination?.let {
             when (it) {
-                is NewRecordDestination.RecordResultsDestination -> {
-
-                }
+                is NewRecordDestination.RecordResultsDestination -> navigator.navigate(
+                    RecordResultScreenDestination(it.record)
+                )
 
                 NewRecordDestination.NavigateUp -> navigator.popBackStack()
             }

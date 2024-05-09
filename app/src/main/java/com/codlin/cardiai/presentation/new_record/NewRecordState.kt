@@ -1,7 +1,10 @@
 package com.codlin.cardiai.presentation.new_record
 
+import com.codlin.cardiai.domain.model.record.ChestPain
+import com.codlin.cardiai.domain.model.record.ECG
 import com.codlin.cardiai.domain.model.record.Record
-import com.codlin.cardiai.domain.model.record.RecordType
+import com.codlin.cardiai.domain.model.record.Slope
+import com.codlin.cardiai.domain.model.record.Thal
 
 
 data class NewRecordState(
@@ -18,12 +21,12 @@ sealed interface NewRecordDestination {
 }
 
 private val mcqQuestionsList = listOf(
-    Question("What is the type of chest pain the patient feels?", RecordType.ChestPain.entries),
-    Question("What are the resting electrocardiographic results?", RecordType.ECG.entries),
-    Question("What is the slope of the peak exercise ST segment?", RecordType.Slope.entries),
+    Question("What is the type of chest pain the patient feels?", ChestPain.entries),
+    Question("What are the resting electrocardiographic results?", ECG.entries),
+    Question("What is the slope of the peak exercise ST segment?", Slope.entries),
     Question(
         "What would you classify the resulting condition of Thalassemia?",
-        RecordType.Thal.entries
+        Thal.entries
     ),
     Question("Does the patient suffer from Exercise Angina?", listOf("Yes", "No")),
 )

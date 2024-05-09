@@ -1,10 +1,10 @@
 package com.codlin.cardiai.presentation.record_result
 
-import com.codlin.cardiai.domain.model.Patient
+import com.codlin.cardiai.domain.model.record.Record
 
 
-data class ResultState(
-    val patient: Patient = Patient(),
+data class RecordResultState(
+    val record: Record,
     val navDestination: RecordResultStateDestination? = null,
 )
 
