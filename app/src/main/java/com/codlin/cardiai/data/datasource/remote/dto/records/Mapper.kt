@@ -9,7 +9,8 @@ fun stringToChestPain(string: String): ChestPain =
     ChestPain.valueOf(string.replaceSpaceWithUnderscore())
 
 fun stringToEcg(string: String): ECG =
-    ECG.valueOf(string.replaceSpaceWithUnderscore())
+    if (string == "st-t abnormality") ECG.stt_abnormality
+    else ECG.valueOf(string.replaceSpaceWithUnderscore())
 
 fun stringToSlope(string: String): Slope =
     Slope.valueOf(string.replaceSpaceWithUnderscore())

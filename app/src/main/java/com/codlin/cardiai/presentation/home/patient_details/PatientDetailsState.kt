@@ -16,6 +16,6 @@ data class PatientDetailsState(
 
 sealed interface PatientDetailsDestination {
     data class RecordDetailsDestination(val record: Record) : PatientDetailsDestination
-    data class StartDiagnosisDestination(val patientId: Int) : PatientDetailsDestination
+    data class NewRecordDestination(val patientId: Int) : PatientDetailsDestination
     data class NavigateUp(val refresh: Boolean) : PatientDetailsDestination
 }

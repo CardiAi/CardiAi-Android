@@ -61,12 +61,12 @@ import com.ramcosta.composedestinations.result.ResultRecipient
 fun PatientListScreen(
     viewModel: PatientListViewModel = hiltViewModel(),
     navigator: DestinationsNavigator,
-    resultRecipient: ResultRecipient<PatientDetailsScreenDestination, Boolean>
+    patientDetailsResult: ResultRecipient<PatientDetailsScreenDestination, Boolean>,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val patients = viewModel.patients.collectAsLazyPagingItems()
 
-    resultRecipient.onNavResult { result ->
+    patientDetailsResult.onNavResult { result ->
         if (result is NavResult.Value) {
             if (result.value) {
                 viewModel.refreshPatients()
@@ -78,7 +78,7 @@ fun PatientListScreen(
         viewModel.onEvent(PatientListEvent.OnBackClicked)
     }
 
-    LaunchedEffect(key1 = state) {
+    LaunchedEffect(key1 = state.navDestination) {
         state.navDestination?.let { destination ->
             when (destination) {
                 PatientsListDestination.AuthDestination -> {
@@ -137,7 +137,12 @@ private fun PatientListContent(
                     )
                 else
                     TopAppBar(
-                        title = { Text(text = "Patients List") },
+                        title = {
+                            Text(
+                                text = "Patients List",
+                                style = MaterialTheme.typography.headlineSmall
+                            )
+                        },
                         actions = {
                             IconButton(onClick = { onEvent(PatientListEvent.ToggleSearchVisibility) }) {
                                 Icon(

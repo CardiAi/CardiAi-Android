@@ -60,8 +60,7 @@ fun <T : Any> PaginationLazyColumn(
                     } else {
                         item {
                             LazyPagingItemsError(
-                                errorMessage = error.error.localizedMessage
-                                    ?: "An unknown error has occurred."
+                                errorMessage = "Unable to connect to the server."
                             )
                         }
                     }

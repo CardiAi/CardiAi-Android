@@ -21,6 +21,7 @@ import javax.inject.Inject
 class PatientListViewModel @Inject constructor(
     private val getPatientsUsecase: GetPatientsUsecase,
     private val logoutUsecase: LogoutUsecase,
+//    private val getActiveUserUsecase: GetActiveUserUsecase
 ) : ViewModel() {
     private val _state = MutableStateFlow(PatientListState())
     val state = _state.asStateFlow()
@@ -34,6 +35,36 @@ class PatientListViewModel @Inject constructor(
     init {
         searchPatients("", isInstant = true)
     }
+
+    /*
+        private suspend fun checkAuthentication() {
+            getActiveUserUsecase().collect { resource ->
+                when (resource) {
+                    is Resource.Error -> if (resource.exception is UnauthorizedException) {
+                        logoutUsecase()
+                        _state.update {
+                            it.copy(
+                                navDestination = PatientsListDestination.AuthDestination,
+                                isLoading = false,
+                            )
+                        }
+                    }
+
+                    is Resource.Loading -> _state.update {
+                        it.copy(
+                            isLoading = true,
+                        )
+                    }
+
+                    is Resource.Success -> _state.update {
+                        it.copy(
+                            isLoading = false,
+                        )
+                    }
+                }
+            }
+        }
+    */
 
     fun refreshPatients() {
         viewModelScope.launch {
@@ -165,7 +196,9 @@ class PatientListViewModel @Inject constructor(
             PatientListEvent.OnContinueClicked -> {
                 _state.update {
                     it.copy(
-                        navDestination = PatientsListDestination.NewRecordDestination(_state.value.selectedId!!)
+                        navDestination = PatientsListDestination.NewRecordDestination(_state.value.selectedId!!),
+                        selectedId = null,
+                        inSelectMode = false,
                     )
                 }
             }

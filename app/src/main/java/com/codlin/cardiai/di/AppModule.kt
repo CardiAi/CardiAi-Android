@@ -7,6 +7,8 @@ import com.codlin.cardiai.data.datasource.remote.interceptor.AuthInterceptor
 import com.codlin.cardiai.data.datasource.remote.service.AuthService
 import com.codlin.cardiai.data.datasource.remote.service.PatientService
 import com.codlin.cardiai.data.datasource.remote.service.RecordService
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,6 +23,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return GsonBuilder().serializeNulls().create()
+    }
 
     @Provides
     @Singleton
@@ -39,10 +47,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
             .baseUrl("https://cardiai-112e49359ba9.herokuapp.com/api/")
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .client(okHttpClient)
             .build()
     }

@@ -5,10 +5,11 @@ import com.codlin.cardiai.domain.model.record.Record
 
 data class RecordResultState(
     val record: Record,
-    val navDestination: RecordResultStateDestination? = null,
+    val isLoading: Boolean = true,
+    val screenError: String? = null,
+    val navDestination: RecordResultDestination? = null,
 )
 
-interface RecordResultStateDestination {
-    data object NewRecordDestination : RecordResultStateDestination
-    data object PatientListDestination : RecordResultStateDestination
+sealed interface RecordResultDestination {
+    data object PatientListDestination : RecordResultDestination
 }

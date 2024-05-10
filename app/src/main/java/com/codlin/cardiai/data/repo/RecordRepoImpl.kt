@@ -13,11 +13,17 @@ import com.codlin.cardiai.domain.util.Resource
 import com.codlin.cardiai.domain.util.exception.InvalidRecordException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 import javax.inject.Inject
 
 class RecordRepoImpl @Inject constructor(
     private val recordService: RecordService
 ) : RecordRepo {
+
+    init {
+        Timber.tag("SendingRecord")
+    }
+
     override fun getPatientRecords(patinetId: Int): Flow<PagingData<Record>> =
         Pager(
             config = PagingConfig(pageSize = 10, prefetchDistance = 2),
@@ -29,7 +35,10 @@ class RecordRepoImpl @Inject constructor(
     override fun newRecord(patientId: Int, record: Record): Flow<Resource<Record>> = flow {
         emit(Resource.Loading())
         val resultRecord: Record? = tryRequest {
-            val response = recordService.addRecord(patientId, RecordDto.fromDomainModel(record))
+            val recordDto = RecordDto.fromDomainModel(record)
+            Timber.d("Patient Id: $patientId")
+            Timber.d("Record Dto: $recordDto")
+            val response = recordService.addRecord(patientId, recordDto)
             if (response.isSuccessful) {
                 val body = response.body()!!
                 if (body.success) {

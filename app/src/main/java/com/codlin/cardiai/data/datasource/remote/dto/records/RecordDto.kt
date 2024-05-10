@@ -1,6 +1,7 @@
 package com.codlin.cardiai.data.datasource.remote.dto.records
 
 import com.codlin.cardiai.domain.model.Patient
+import com.codlin.cardiai.domain.model.record.ECG
 import com.codlin.cardiai.domain.model.record.Record
 import com.google.gson.annotations.SerializedName
 
@@ -55,7 +56,11 @@ data class RecordDto(
                 id = id,
                 chestPain = chestPain.name.replaceUnderscoreWithSpace(),
                 bloodPressure = bloodPressure,
-                ecg = ecg?.name?.replaceUnderscoreWithSpace(),
+                ecg = when (ecg) {
+                    ECG.unknown -> null
+                    ECG.stt_abnormality -> "st-t abnormality"
+                    else -> ecg?.name?.replaceUnderscoreWithSpace()
+                },
                 cholesterol = cholesterol,
                 bloodSugar = bloodSugar,
                 maxThal = maxThal,

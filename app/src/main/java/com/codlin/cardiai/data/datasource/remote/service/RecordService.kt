@@ -14,6 +14,7 @@ import retrofit2.http.Query
 
 interface RecordService {
     @POST("patient/{id}/record/add")
+    @Authenticated
     suspend fun addRecord(
         @Path("id") patientId: Int,
         @Body record: RecordDto,

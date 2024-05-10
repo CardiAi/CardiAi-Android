@@ -125,7 +125,7 @@ class PatientDetailsViewModel @AssistedInject constructor(
             PatientDetailsEvent.OnStartDiagnosisClicked ->
                 _state.update {
                     it.copy(
-                        navDestination = PatientDetailsDestination.StartDiagnosisDestination(_state.value.patient.id!!)
+                        navDestination = PatientDetailsDestination.NewRecordDestination(_state.value.patient.id!!)
                     )
                 }
 

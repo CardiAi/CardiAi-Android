@@ -41,6 +41,7 @@ import com.codlin.cardiai.domain.model.Patient
 import com.codlin.cardiai.domain.model.record.Record
 import com.codlin.cardiai.presentation.UIFormatter
 import com.codlin.cardiai.presentation.components.RecordIcon
+import com.codlin.cardiai.presentation.destinations.NewRecordScreenDestination
 import com.codlin.cardiai.presentation.destinations.RecordDetailsScreenDestination
 import com.codlin.cardiai.presentation.home.components.PaginationLazyColumn
 import com.codlin.cardiai.presentation.home.patient_details.components.BottomSheet
@@ -86,7 +87,10 @@ fun PatientDetailsScreen(
                     RecordDetailsScreenDestination(it.record)
                 )
 
-                is PatientDetailsDestination.StartDiagnosisDestination -> TODO()
+                is PatientDetailsDestination.NewRecordDestination -> navigator.navigate(
+                    NewRecordScreenDestination(it.patientId)
+                )
+
                 is PatientDetailsDestination.NavigateUp -> resultNavigator.navigateBack(result = it.refresh)
             }
         }
