@@ -50,7 +50,7 @@ fun PatientItem(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = patient.name,
+                text = patient.name!!,
                 style = MaterialTheme.typography.bodyMedium,
                 color = Neutrals1000,
             )
