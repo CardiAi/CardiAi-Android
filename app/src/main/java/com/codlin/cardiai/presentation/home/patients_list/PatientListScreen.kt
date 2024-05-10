@@ -78,7 +78,7 @@ fun PatientListScreen(
         }
     }
 
-    BackHandler {
+    BackHandler(enabled = state.isBottomSheetVisible || state.isSearchVisible || state.inSelectMode) {
         viewModel.onEvent(PatientListEvent.OnBackClicked)
     }
 
@@ -97,7 +97,6 @@ fun PatientListScreen(
                     navigator.navigate(PatientDetailsScreenDestination(destination.patient))
                 }
 
-                PatientsListDestination.NavigateUp -> navigator.popBackStack()
                 is PatientsListDestination.NewRecordDestination -> navigator.navigate(
                     NewRecordScreenDestination(destination.patientId)
                 )

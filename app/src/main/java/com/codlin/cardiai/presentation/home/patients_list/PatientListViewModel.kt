@@ -170,7 +170,13 @@ class PatientListViewModel @Inject constructor(
             )
 
             PatientListEvent.OnBackClicked -> {
-                if (state.value.inSelectMode) {
+                if (state.value.isBottomSheetVisible) {
+                    _state.update {
+                        it.copy(
+                            isBottomSheetVisible = false,
+                        )
+                    }
+                } else if (state.value.inSelectMode) {
                     _state.update {
                         it.copy(
                             inSelectMode = false,
@@ -182,12 +188,6 @@ class PatientListViewModel @Inject constructor(
                     _state.update {
                         it.copy(
                             isSearchVisible = false,
-                        )
-                    }
-                } else {
-                    _state.update {
-                        it.copy(
-                            navDestination = PatientsListDestination.NavigateUp
                         )
                     }
                 }
