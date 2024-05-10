@@ -6,12 +6,15 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.codlin.cardiai.domain.model.Patient
 import com.codlin.cardiai.domain.usecase.auth.LogoutUsecase
+import com.codlin.cardiai.domain.usecase.patients.AddPatientUseCase
 import com.codlin.cardiai.domain.usecase.patients.GetPatientsUsecase
+import com.codlin.cardiai.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -21,6 +24,7 @@ import javax.inject.Inject
 class PatientListViewModel @Inject constructor(
     private val getPatientsUsecase: GetPatientsUsecase,
     private val logoutUsecase: LogoutUsecase,
+    private val addPatientUseCase: AddPatientUseCase
 ) : ViewModel() {
     private val _state = MutableStateFlow(PatientListState())
     val state = _state.asStateFlow()
@@ -158,14 +162,81 @@ class PatientListViewModel @Inject constructor(
                 }
             }
 
-            PatientListEvent.OnAddPatientClicked -> {
-                TODO()
-            }
-
             PatientListEvent.OnContinueClicked -> {
                 _state.update {
                     it.copy(
                         navDestination = PatientsListDestination.NewRecordDestination(_state.value.selectedId!!)
+                    )
+                }
+            }
+
+            PatientListEvent.OnAddPatientClicked -> {
+                _state.update {
+                    it.copy(
+                        isBottomSheetVisible = true,
+                    )
+                }
+            }
+
+            PatientListEvent.OnConfirmAdd -> {
+                viewModelScope.launch {
+                    val addedPatient = Patient(
+                        id = _state.value.addedPatient.id,
+                        name = _state.value.addedPatient.name,
+                        age = _state.value.addedPatient.age,
+                        gender = _state.value.addedPatient.gender,
+                    )
+                    addPatientUseCase(addedPatient).collectLatest { resource ->
+                        when (resource) {
+                            is Resource.Error -> {
+                                _state.update {
+                                    it.copy(
+                                        isLoading = false,
+                                        screenError = resource.exception?.message
+                                            ?: "Unknown error occurred."
+                                    )
+                                }
+                            }
+
+                            is Resource.Loading -> {
+                                _state.update {
+                                    it.copy(
+                                        isLoading = true
+                                    )
+                                }
+                            }
+
+                            is Resource.Success -> {
+                                _state.update {
+                                    it.copy(
+                                        isLoading = false,
+                                        isBottomSheetVisible = false,
+                                        patient = resource.data!!,
+                                    )
+                                }
+                                refreshPatients()
+                            }
+                        }
+                    }
+                }
+            }
+
+            PatientListEvent.OnBottomSheetDismissed -> {
+                _state.update {
+                    it.copy(
+                        isBottomSheetVisible = false
+                    )
+                }
+            }
+
+            is PatientListEvent.OnAddPatient -> {
+                _state.update {
+                    it.copy(
+                        addedPatient = it.addedPatient.copy(
+                            name = event.name ?: it.addedPatient.name,
+                            age = event.age?.toInt() ?: it.addedPatient.age,
+                            gender = event.gender ?: it.addedPatient.gender
+                        )
                     )
                 }
             }

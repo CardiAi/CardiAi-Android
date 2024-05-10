@@ -22,9 +22,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,6 +46,7 @@ import com.codlin.cardiai.presentation.components.isScrollingUp
 import com.codlin.cardiai.presentation.destinations.NewRecordScreenDestination
 import com.codlin.cardiai.presentation.destinations.PatientDetailsScreenDestination
 import com.codlin.cardiai.presentation.home.components.PaginationLazyColumn
+import com.codlin.cardiai.presentation.home.patient_details.components.BottomSheet
 import com.codlin.cardiai.presentation.home.patients_list.components.AddPatientButton
 import com.codlin.cardiai.presentation.home.patients_list.components.ConfirmSelectionButton
 import com.codlin.cardiai.presentation.home.patients_list.components.PatientItem
@@ -55,6 +58,7 @@ import com.ramcosta.composedestinations.navigation.popUpTo
 import com.ramcosta.composedestinations.result.NavResult
 import com.ramcosta.composedestinations.result.ResultRecipient
 
+@OptIn(ExperimentalMaterial3Api::class)
 @HomeNavGraph(start = true)
 @Destination
 @Composable
@@ -111,6 +115,7 @@ private fun PatientListContent(
     state: PatientListState,
     patients: LazyPagingItems<Patient>,
     onEvent: (PatientListEvent) -> Unit,
+    sheetState: SheetState = rememberModalBottomSheetState(),
 ) {
     val listState = rememberLazyListState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -244,6 +249,15 @@ private fun PatientListContent(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                 selected = patient.id == state.selectedId,
             )
+            BottomSheet(
+                patient = state.addedPatient,
+                isVisible = state.isBottomSheetVisible,
+                sheetState = sheetState,
+                onNameChanged = { onEvent(PatientListEvent.OnAddPatient(name = it)) },
+                onAgeChanged = { onEvent(PatientListEvent.OnAddPatient(age = it)) },
+                onGenderChanged = { onEvent(PatientListEvent.OnAddPatient(gender = it)) },
+                onSubmitClicked = { onEvent(PatientListEvent.OnConfirmAdd) },
+                onDismiss = { onEvent(PatientListEvent.OnBottomSheetDismissed) })
         }
     }
 }

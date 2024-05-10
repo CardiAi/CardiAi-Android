@@ -1,5 +1,6 @@
 package com.codlin.cardiai.presentation.home.patients_list
 
+import com.codlin.cardiai.domain.model.Gender
 import com.codlin.cardiai.domain.model.Patient
 
 sealed class PatientListEvent {
@@ -12,5 +13,12 @@ sealed class PatientListEvent {
     data object ToggleSearchVisibility : PatientListEvent()
     data object OnBackClicked : PatientListEvent()
     data object OnAddPatientClicked : PatientListEvent()
+    data object OnBottomSheetDismissed : PatientListEvent()
     data object OnContinueClicked : PatientListEvent()
+    data object OnConfirmAdd : PatientListEvent()
+    data class OnAddPatient(
+        val name: String? = null,
+        val age: String? = null,
+        val gender: Gender? = null
+    ) : PatientListEvent()
 }
