@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import com.codlin.cardiai.domain.model.Patient
 import com.codlin.cardiai.domain.model.record.Record
 import com.codlin.cardiai.domain.usecase.patients.DeletePatientUseCase
@@ -52,7 +53,12 @@ class PatientDetailsViewModel @AssistedInject constructor(
                 .cachedIn(viewModelScope)
                 .collect { records ->
                     _records.update {
-                        records
+                        records.map {
+                            it.copy(
+                                patientId = _state.value.patient.id,
+                                patientName = _state.value.patient.name
+                            )
+                        }
                     }
                 }
         }
@@ -71,7 +77,7 @@ class PatientDetailsViewModel @AssistedInject constructor(
             is PatientDetailsEvent.OnRecordClicked ->
                 _state.update {
                     it.copy(
-                        navDestination = PatientDetailsDestination.DiagnosisDetailsDestination(event.record)
+                        navDestination = PatientDetailsDestination.RecordDetailsDestination(event.record)
                     )
                 }
 

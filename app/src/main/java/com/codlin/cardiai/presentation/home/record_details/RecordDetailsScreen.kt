@@ -19,14 +19,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.codlin.cardiai.R
-import com.codlin.cardiai.domain.model.Patient
 import com.codlin.cardiai.domain.model.record.Record
 import com.codlin.cardiai.presentation.UIFormatter
 import com.codlin.cardiai.presentation.components.RecordIcon
@@ -35,45 +37,50 @@ import com.codlin.cardiai.presentation.navigation.HomeNavGraph
 import com.codlin.cardiai.presentation.theme.Neutral500
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlin.reflect.full.declaredMemberProperties
 
 
 @HomeNavGraph
-@Destination
+@Destination(navArgsDelegate = Record::class)
 @Composable
 fun RecordDetailsScreen(
-    viewModel: RecordDetailsViewModel = hiltViewModel(),
-    navigator: DestinationsNavigator
+    navigator: DestinationsNavigator,
+    record: Record,
 ) {
+    val viewModel =
+        hiltViewModel<RecordDetailsViewModel, RecordDetailsViewModel.RecordDetailsViewModelFactory>() {
+            it.create(record)
+        }
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
+    LaunchedEffect(key1 = state.navigateUp) {
+        if (state.navigateUp) {
+            navigator.popBackStack()
+            viewModel.resetEvents()
+        }
+    }
+
+    RecordDetailsContent(state = state, onEvent = viewModel::onEvent)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RecordDetailsContent(
-    patient: Patient,
-    record: Record,
-    onEvent: () -> Unit,
+    state: RecordDetailsState,
+    onEvent: (RecordDetailsEvent) -> Unit,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {},
                 navigationIcon = {
-                    IconButton(onClick = { onEvent() }) {
+                    IconButton(onClick = { onEvent(RecordDetailsEvent.OnBackClicked) }) {
                         Icon(
                             painter = painterResource(id = R.drawable.arrow_back),
                             contentDescription = "Arrow Back Icon",
                         )
                     }
                 },
-                actions = {
-                    IconButton(onClick = { onEvent() }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.delete_icon),
-                            contentDescription = "Arrow Back Icon",
-                        )
-                    }
-                }
             )
         }
     ) { paddingValue ->
@@ -83,7 +90,7 @@ private fun RecordDetailsContent(
                 .padding(paddingValue)
                 .padding(horizontal = 8.dp),
             verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalAlignment = Alignment.Start,
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -93,7 +100,7 @@ private fun RecordDetailsContent(
                     .padding(horizontal = 8.dp)
             ) {
                 RecordIcon(
-                    result = record.result,
+                    result = state.record.result,
                     modifierBackground = Modifier.size(98.dp),
                     modifierHeart = Modifier.size(49.dp)
                 )
@@ -104,7 +111,7 @@ private fun RecordDetailsContent(
                         .weight(1f)
                 ) {
                     Text(
-                        text = patient.name!!,
+                        text = state.record.patientName!!,
                         style = MaterialTheme.typography.headlineLarge,
                         color = Color.Black,
                     )
@@ -113,14 +120,14 @@ private fun RecordDetailsContent(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(
-                            text = UIFormatter.formatRecordResult(record.result),
+                            text = UIFormatter.formatRecordResult(state.record.result),
                             style = MaterialTheme.typography.headlineLarge,
                             color = Color.Black,
                             modifier = Modifier.padding(vertical = 4.dp)
                         )
                         Spacer(modifier = Modifier.width(80.dp))
                         Text(
-                            text = record.createdAt ?: "",
+                            text = state.record.createdAt ?: "",
                             style = MaterialTheme.typography.titleSmall,
                             color = Color.Black,
                         )
@@ -129,27 +136,24 @@ private fun RecordDetailsContent(
             }
             Spacer(modifier = Modifier.height(16.dp))
             HorizontalDivider(
-                modifier = Modifier.weight(1f),
                 color = Neutral500,
             )
             Spacer(modifier = Modifier.height(24.dp))
-            for (prop in record.javaClass.declaredFields) {
-                prop.get(record)?.let { RecordValueItem(name = prop.name, value = it.toString()) }
+            for (prop in state.record::class.declaredMemberProperties) {
+                val value = prop.getter.call(state.record) ?: "Not Recorded"
+                val name = prop.name
+                if (
+                    name.contains("patient") ||
+                    name.contains("id") ||
+                    name.contains("At")
+                ) continue
+                RecordValueItem(
+                    name = name,
+                    value = value.toString(),
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
     }
 }
-
-//@Composable
-//@Preview(showBackground = true)
-//private fun DiagnosisDetailsScreenPreview() {
-//    CardiAiTheme {
-//        RecordDetailsContent(
-//            patient = Patient(
-//                name = "Kareem Sayed",
-//                lastResult = 2,
-//                lastRecordDate = "10/5/2024"
-//            ),
-//            onEvent = {})
-//    }
-//}

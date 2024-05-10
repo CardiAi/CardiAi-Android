@@ -49,7 +49,7 @@ fun NewRecordScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
 
-    LaunchedEffect(key1 = state) {
+    LaunchedEffect(key1 = state.navDestination, key2 = state.screenError) {
         state.navDestination?.let {
             when (it) {
                 is NewRecordDestination.RecordResultsDestination -> navigator.navigate(

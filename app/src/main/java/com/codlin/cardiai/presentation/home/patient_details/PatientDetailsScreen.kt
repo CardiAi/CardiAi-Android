@@ -41,6 +41,7 @@ import com.codlin.cardiai.domain.model.Patient
 import com.codlin.cardiai.domain.model.record.Record
 import com.codlin.cardiai.presentation.UIFormatter
 import com.codlin.cardiai.presentation.components.RecordIcon
+import com.codlin.cardiai.presentation.destinations.RecordDetailsScreenDestination
 import com.codlin.cardiai.presentation.home.components.PaginationLazyColumn
 import com.codlin.cardiai.presentation.home.patient_details.components.BottomSheet
 import com.codlin.cardiai.presentation.home.patient_details.components.RecordItem
@@ -78,10 +79,13 @@ fun PatientDetailsScreen(
             bottomSheetState.expand()
         }
     }
-    LaunchedEffect(key1 = state) {
+    LaunchedEffect(key1 = state.navDestination, key2 = state.screenError) {
         state.navDestination?.let {
             when (it) {
-                is PatientDetailsDestination.DiagnosisDetailsDestination -> TODO()
+                is PatientDetailsDestination.RecordDetailsDestination -> navigator.navigate(
+                    RecordDetailsScreenDestination(it.record)
+                )
+
                 is PatientDetailsDestination.StartDiagnosisDestination -> TODO()
                 is PatientDetailsDestination.NavigateUp -> resultNavigator.navigateBack(result = it.refresh)
             }

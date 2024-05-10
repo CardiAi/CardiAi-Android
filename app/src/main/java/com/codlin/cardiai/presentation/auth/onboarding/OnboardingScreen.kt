@@ -36,7 +36,7 @@ fun OnboardingScreen(
     navigator: DestinationsNavigator,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    LaunchedEffect(key1 = state) {
+    LaunchedEffect(key1 = state.navDestination) {
         when (state.navDestination) {
             null -> return@LaunchedEffect
             OnboardingDestination.LoginDestination -> navigator.navigate(LoginScreenDestination)
