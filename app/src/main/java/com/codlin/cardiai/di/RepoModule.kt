@@ -1,7 +1,7 @@
 package com.codlin.cardiai.di
 
 import com.codlin.cardiai.data.repo.PatientRepoImpl
-import com.codlin.cardiai.data.repo.RecordRepoImp
+import com.codlin.cardiai.data.repo.RecordRepoImpl
 import com.codlin.cardiai.data.repo.UserRepoImpl
 import com.codlin.cardiai.domain.repo.PatientRepo
 import com.codlin.cardiai.domain.repo.RecordRepo
@@ -26,5 +26,5 @@ abstract class RepoModule {
 
     @Binds
     @Singleton
-    abstract fun bindRecordRepo(recordRepoImp: RecordRepoImp): RecordRepo
+    abstract fun bindRecordRepo(recordRepoImpl: RecordRepoImpl): RecordRepo
 }

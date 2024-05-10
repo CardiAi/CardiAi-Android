@@ -2,37 +2,36 @@ package com.codlin.cardiai.data.datasource.remote.paging_datasource
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import com.codlin.cardiai.data.datasource.remote.service.PatientService
-import com.codlin.cardiai.domain.model.Patient
+import com.codlin.cardiai.data.datasource.remote.service.RecordService
+import com.codlin.cardiai.domain.model.record.Record
 import com.codlin.cardiai.domain.util.exception.NoDataException
 import retrofit2.HttpException
 import java.io.IOException
 
-class PatientPagingSource(
-    private val patientService: PatientService,
-    private val searchQuery: String?,
-) : PagingSource<Int, Patient>() {
-
-
-    override fun getRefreshKey(state: PagingState<Int, Patient>): Int? {
+class RecordPagingSource(
+    private val recordService: RecordService,
+    private val patientId: Int,
+) : PagingSource<Int, Record>() {
+    override fun getRefreshKey(state: PagingState<Int, Record>): Int? {
         return state.anchorPosition
     }
 
-    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Patient> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Record> {
         return try {
             val currentPage = params.key ?: 1
-            val response = patientService.getPatients(currentPage, searchQuery)
+            val response =
+                recordService.getPatientRecords(patientId = patientId, page = currentPage)
             if (response.isSuccessful) {
                 val body = response.body()!!
-                val patientsDto = body.data?.data ?: emptyList()
-                val patients = patientsDto.map {
+                val recordsDto = body.data?.data ?: emptyList()
+                val records = recordsDto.map {
                     it.toDomainModel()
                 }
                 val backEndMetaData = body.data?.meta ?: return LoadResult.Error(NoDataException())
                 LoadResult.Page(
-                    data = patients,
+                    data = records,
                     prevKey = if (currentPage == 1) null else currentPage - 1,
-                    nextKey = if (patients.isEmpty() || backEndMetaData.lastPage == backEndMetaData.currentPage) null else backEndMetaData.currentPage + 1
+                    nextKey = if (records.isEmpty() || backEndMetaData.lastPage == backEndMetaData.currentPage) null else backEndMetaData.currentPage + 1
                 )
             } else {
                 LoadResult.Error(Exception("Unknown Error"))
@@ -43,4 +42,5 @@ class PatientPagingSource(
             return LoadResult.Error(e)
         }
     }
+
 }

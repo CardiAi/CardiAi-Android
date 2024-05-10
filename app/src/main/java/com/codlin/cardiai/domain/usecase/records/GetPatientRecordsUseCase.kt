@@ -1,7 +1,7 @@
-package com.codlin.cardiai.domain.usecase.patients
+package com.codlin.cardiai.domain.usecase.records
 
 import androidx.paging.PagingData
-import com.codlin.cardiai.domain.model.Record
+import com.codlin.cardiai.domain.model.record.Record
 import com.codlin.cardiai.domain.repo.RecordRepo
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

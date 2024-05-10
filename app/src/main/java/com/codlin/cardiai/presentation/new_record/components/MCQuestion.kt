@@ -27,7 +27,7 @@ fun MCQuestion(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .scrollable(
                 rememberScrollState(),
                 orientation = Orientation.Vertical

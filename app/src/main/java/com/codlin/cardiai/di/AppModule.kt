@@ -6,6 +6,7 @@ import com.codlin.cardiai.data.datasource.local.datastore.UserPreferences
 import com.codlin.cardiai.data.datasource.remote.interceptor.AuthInterceptor
 import com.codlin.cardiai.data.datasource.remote.service.AuthService
 import com.codlin.cardiai.data.datasource.remote.service.PatientService
+import com.codlin.cardiai.data.datasource.remote.service.RecordService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -56,6 +57,12 @@ object AppModule {
     @Singleton
     fun providePatientService(retrofit: Retrofit): PatientService {
         return retrofit.create(PatientService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRecordService(retrofit: Retrofit): RecordService {
+        return retrofit.create(RecordService::class.java)
     }
 
     @Provides

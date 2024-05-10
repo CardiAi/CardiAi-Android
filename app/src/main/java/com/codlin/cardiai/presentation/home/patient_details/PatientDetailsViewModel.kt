@@ -2,10 +2,13 @@ package com.codlin.cardiai.presentation.home.patient_details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.codlin.cardiai.domain.model.Patient
+import com.codlin.cardiai.domain.model.record.Record
 import com.codlin.cardiai.domain.usecase.patients.DeletePatientUseCase
 import com.codlin.cardiai.domain.usecase.patients.EditPatientUseCase
-import com.codlin.cardiai.domain.usecase.patients.GetPatientRecordsUseCase
+import com.codlin.cardiai.domain.usecase.records.GetPatientRecordsUseCase
 import com.codlin.cardiai.domain.util.Resource
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -14,12 +17,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel(assistedFactory = PatientDetailsViewModel.PatientDetailsViewModelFactory::class)
 class PatientDetailsViewModel @AssistedInject constructor(
-    @Assisted private val patient: Patient,
+    @Assisted patient: Patient,
     private val getPatientRecordsUseCase: GetPatientRecordsUseCase,
     private val deletePatientUseCase: DeletePatientUseCase,
     private val editPatientUseCase: EditPatientUseCase,
@@ -33,27 +37,47 @@ class PatientDetailsViewModel @AssistedInject constructor(
     private val _state = MutableStateFlow(PatientDetailsState(patient))
     val state = _state.asStateFlow()
 
+    private val _records: MutableStateFlow<PagingData<Record>> =
+        MutableStateFlow(PagingData.empty())
+    val records = _records.asStateFlow()
+
+    init {
+        getPatientRecords()
+    }
+
+    private fun getPatientRecords() {
+        viewModelScope.launch {
+            getPatientRecordsUseCase(_state.value.patient.id!!)
+                .distinctUntilChanged()
+                .cachedIn(viewModelScope)
+                .collect { records ->
+                    _records.update {
+                        records
+                    }
+                }
+        }
+    }
+
     fun onEvent(event: PatientDetailsEvent) {
         when (event) {
             PatientDetailsEvent.OnBackClicked -> {
                 _state.update {
                     it.copy(
-                        navDestination = PatientDetailsDestination.NavigateUp
+                        navDestination = PatientDetailsDestination.NavigateUp(_state.value.isPatientEdited)
                     )
                 }
             }
 
-            PatientDetailsEvent.OnRecordClicked ->
+            is PatientDetailsEvent.OnRecordClicked ->
                 _state.update {
-                    TODO()
-//                    it.copy(
-//                        navDestination = PatientDetailsDestination.DiagnosisDetailsDestination()
-//                    )
+                    it.copy(
+                        navDestination = PatientDetailsDestination.DiagnosisDetailsDestination(event.record)
+                    )
                 }
 
             PatientDetailsEvent.OnDeleteClicked -> {
                 viewModelScope.launch {
-                    deletePatientUseCase(patient.id!!).collectLatest { resource ->
+                    deletePatientUseCase(_state.value.patient.id!!).collectLatest { resource ->
                         when (resource) {
                             is Resource.Error -> {
                                 _state.update {
@@ -75,7 +99,7 @@ class PatientDetailsViewModel @AssistedInject constructor(
                                 _state.update {
                                     it.copy(
                                         isLoading = false,
-                                        navDestination = PatientDetailsDestination.NavigateUp
+                                        navDestination = PatientDetailsDestination.NavigateUp(true)
                                     )
                                 }
                             }
@@ -95,13 +119,19 @@ class PatientDetailsViewModel @AssistedInject constructor(
             PatientDetailsEvent.OnStartDiagnosisClicked ->
                 _state.update {
                     it.copy(
-                        navDestination = PatientDetailsDestination.StartDiagnosisDestination(patient.id!!)
+                        navDestination = PatientDetailsDestination.StartDiagnosisDestination(_state.value.patient.id!!)
                     )
                 }
 
             PatientDetailsEvent.OnConfirmEdit -> {
                 viewModelScope.launch {
-                    editPatientUseCase(_state.value.editablePatient!!).collectLatest { resource ->
+                    val editedPatient = Patient(
+                        id = _state.value.patient.id,
+                        name = _state.value.editablePatient.name,
+                        gender = _state.value.editablePatient.gender,
+                        age = _state.value.editablePatient.age,
+                    )
+                    editPatientUseCase(editedPatient).collectLatest { resource ->
                         when (resource) {
                             is Resource.Error -> {
                                 _state.update {
@@ -124,7 +154,9 @@ class PatientDetailsViewModel @AssistedInject constructor(
                                 _state.update {
                                     it.copy(
                                         isLoading = false,
-                                        isBottomSheetVisible = true
+                                        isBottomSheetVisible = false,
+                                        isPatientEdited = true,
+                                        patient = resource.data!!
                                     )
                                 }
                             }
@@ -144,12 +176,11 @@ class PatientDetailsViewModel @AssistedInject constructor(
             is PatientDetailsEvent.OnEditPatient -> {
                 _state.update {
                     it.copy(
-                        editablePatient = _state.value.editablePatient?.copy(
-                            name = event.name,
-                            age = event.age,
-                            gender = event.gender
+                        editablePatient = it.editablePatient.copy(
+                            name = event.name ?: it.editablePatient.name,
+                            age = event.age?.toInt() ?: it.editablePatient.age,
+                            gender = event.gender ?: it.editablePatient.gender
                         )
-                            ?: Patient(name = event.name, age = event.age, gender = event.gender)
                     )
                 }
             }

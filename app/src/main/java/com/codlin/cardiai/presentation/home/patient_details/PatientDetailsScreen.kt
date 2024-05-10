@@ -1,6 +1,7 @@
 package com.codlin.cardiai.presentation.home.patient_details
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -31,21 +31,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.codlin.cardiai.R
 import com.codlin.cardiai.domain.model.Patient
+import com.codlin.cardiai.domain.model.record.Record
 import com.codlin.cardiai.presentation.UIFormatter
 import com.codlin.cardiai.presentation.components.RecordIcon
+import com.codlin.cardiai.presentation.home.components.PaginationLazyColumn
 import com.codlin.cardiai.presentation.home.patient_details.components.BottomSheet
+import com.codlin.cardiai.presentation.home.patient_details.components.RecordItem
 import com.codlin.cardiai.presentation.home.patients_list.components.StartDiagnosisButton
 import com.codlin.cardiai.presentation.navigation.HomeNavGraph
-import com.codlin.cardiai.presentation.theme.CardiAiTheme
 import com.codlin.cardiai.presentation.theme.Neutral500
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @HomeNavGraph
@@ -53,6 +57,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 @Composable
 fun PatientDetailsScreen(
     navigator: DestinationsNavigator,
+    resultNavigator: ResultBackNavigator<Boolean>,
     patient: Patient,
 ) {
     val viewModel: PatientDetailsViewModel =
@@ -61,6 +66,7 @@ fun PatientDetailsScreen(
         }
 
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val records = viewModel.records.collectAsLazyPagingItems()
 
     val snackbarHostState = remember { SnackbarHostState() }
     val bottomSheetState = rememberModalBottomSheetState()
@@ -77,7 +83,7 @@ fun PatientDetailsScreen(
             when (it) {
                 is PatientDetailsDestination.DiagnosisDetailsDestination -> TODO()
                 is PatientDetailsDestination.StartDiagnosisDestination -> TODO()
-                PatientDetailsDestination.NavigateUp -> navigator.popBackStack()
+                is PatientDetailsDestination.NavigateUp -> resultNavigator.navigateBack(result = it.refresh)
             }
         }
         state.screenError?.let {
@@ -87,13 +93,20 @@ fun PatientDetailsScreen(
     }
 
 
-    PatientDetailsContent(state, viewModel::onEvent, snackbarHostState, bottomSheetState)
+    PatientDetailsContent(
+        state = state,
+        records = records,
+        onEvent = viewModel::onEvent,
+        snackbarHostState = snackbarHostState,
+        sheetState = bottomSheetState
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PatientDetailsContent(
     state: PatientDetailsState,
+    records: LazyPagingItems<Record>,
     onEvent: (PatientDetailsEvent) -> Unit,
     snackbarHostState: SnackbarHostState,
     sheetState: SheetState = rememberModalBottomSheetState(),
@@ -191,56 +204,60 @@ private fun PatientDetailsContent(
             Spacer(modifier = Modifier.height(8.dp))
             HorizontalDivider(
                 modifier = Modifier
-                    .weight(1f)
                     .padding(vertical = 8.dp),
                 color = Neutral500,
             )
-            LazyColumn {
-
-            }
-            BottomSheet(
-                patient = state.editablePatient,
-                isVisible = state.isBottomSheetVisible,
-                sheetState = sheetState,
-                onNameChanged = {
-                    onEvent(
-                        PatientDetailsEvent.OnEditPatient(name = it)
+            PaginationLazyColumn(
+                pagingItems = records,
+                loadingItem = {
+                    RecordItem(
+                        record = Record(),
+                        onClick = { },
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
                     )
                 },
-                onAgeChanged = {
-                    onEvent(PatientDetailsEvent.OnEditPatient(age = it.toInt()))
-                },
-                onGenderChanged = {
-                    onEvent(PatientDetailsEvent.OnEditPatient(gender = it))
-                },
-                onSubmitClicked = {
-                    onEvent(PatientDetailsEvent.OnConfirmEdit)
-                },
-                onDismiss = {
-                    onEvent(PatientDetailsEvent.OnBottomSheetDismissed)
+                emptyListComposable = {
+                    Box(
+                        modifier = Modifier.fillParentMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "This patient has no records yet.",
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
                 }
-            )
-        }
-    }
-}
-
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-@Preview(showBackground = true)
-private fun PatientDetailsPreview() {
-    CardiAiTheme {
-        PatientDetailsContent(
-            state = PatientDetailsState(
-                Patient(
-                    name = "Ahmed",
-                    age = 22,
-                    lastResult = 2,
+            ) { record ->
+                RecordItem(
+                    record = record,
+                    onClick = {
+                        onEvent(PatientDetailsEvent.OnRecordClicked(record))
+                    },
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                 )
-            ),
-            onEvent = {},
-            SnackbarHostState(),
-            rememberModalBottomSheetState()
+            }
+        }
+        BottomSheet(
+            patient = state.editablePatient,
+            isVisible = state.isBottomSheetVisible,
+            sheetState = sheetState,
+            onNameChanged = {
+                onEvent(
+                    PatientDetailsEvent.OnEditPatient(name = it)
+                )
+            },
+            onAgeChanged = {
+                onEvent(PatientDetailsEvent.OnEditPatient(age = it))
+            },
+            onGenderChanged = {
+                onEvent(PatientDetailsEvent.OnEditPatient(gender = it))
+            },
+            onSubmitClicked = {
+                onEvent(PatientDetailsEvent.OnConfirmEdit)
+            },
+            onDismiss = {
+                onEvent(PatientDetailsEvent.OnBottomSheetDismissed)
+            }
         )
     }
 }

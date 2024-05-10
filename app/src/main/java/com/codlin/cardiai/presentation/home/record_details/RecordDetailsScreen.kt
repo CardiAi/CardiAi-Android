@@ -104,7 +104,7 @@ private fun RecordDetailsContent(
                         .weight(1f)
                 ) {
                     Text(
-                        text = patient.name,
+                        text = patient.name!!,
                         style = MaterialTheme.typography.headlineLarge,
                         color = Color.Black,
                     )

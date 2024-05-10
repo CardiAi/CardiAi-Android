@@ -17,7 +17,7 @@ data class RecordDto(
     @SerializedName("max_thal")
     val maxThal: Int,
     @SerializedName("exercise_angina")
-    val exerciseAngina: Boolean,
+    val exerciseAngina: Int,
     @SerializedName("old_peak")
     val oldPeak: Double,
     val slope: String,
@@ -38,7 +38,7 @@ data class RecordDto(
             cholesterol = cholesterol,
             bloodSugar = bloodSugar,
             maxThal = maxThal,
-            exerciseAngina = exerciseAngina,
+            exerciseAngina = exerciseAngina != 0,
             oldPeak = oldPeak,
             slope = stringToSlope(slope),
             coronaryArtery = coronaryArtery,
@@ -59,7 +59,7 @@ data class RecordDto(
                 cholesterol = cholesterol,
                 bloodSugar = bloodSugar,
                 maxThal = maxThal,
-                exerciseAngina = exerciseAngina,
+                exerciseAngina = if (exerciseAngina) 1 else 0,
                 oldPeak = oldPeak,
                 slope = slope.name.replaceUnderscoreWithSpace(),
                 coronaryArtery = coronaryArtery,

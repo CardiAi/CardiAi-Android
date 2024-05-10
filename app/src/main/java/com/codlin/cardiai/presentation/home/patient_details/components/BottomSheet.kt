@@ -25,6 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.text.isDigitsOnly
 import com.codlin.cardiai.domain.model.Gender
 import com.codlin.cardiai.domain.model.Patient
 import com.codlin.cardiai.presentation.components.ThemeButton
@@ -73,7 +74,14 @@ fun BottomSheet(
                 Spacer(modifier = Modifier.height(16.dp))
                 ThemeTextField(
                     value = patient?.age?.toString() ?: "",
-                    onValueChange = onAgeChanged,
+                    onValueChange = {
+                        if (
+                            it.isEmpty() ||
+                            it.isDigitsOnly()
+                        ) {
+                            onAgeChanged(it)
+                        }
+                    },
                     label = "Age",
                     modifier = Modifier.fillMaxWidth(),
                     keyboardOptions = KeyboardOptions(

@@ -12,7 +12,7 @@ data class PatientListState(
 )
 
 sealed interface PatientsListDestination {
-    data class PatientsListDetailsDestination(val patient: Patient) : PatientsListDestination
+    data class PatientsDetailsDestination(val patient: Patient) : PatientsListDestination
     data object AuthDestination : PatientsListDestination
     data class NewRecordDestination(val patientId: Int) : PatientsListDestination
     data object NavigateUp : PatientsListDestination

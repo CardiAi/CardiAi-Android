@@ -51,6 +51,20 @@ class MainActivity : ComponentActivity() {
                                         animationSpec = tween(durationMillis = 500)
                                     )
                                 }
+                            ),
+                            NavGraphs.home to NestedNavGraphDefaultAnimations(
+                                enterTransition = {
+                                    slideIntoContainer(
+                                        towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                        animationSpec = tween(durationMillis = 400)
+                                    )
+                                },
+                                exitTransition = {
+                                    slideOutOfContainer(
+                                        towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                        animationSpec = tween(durationMillis = 400)
+                                    )
+                                },
                             )
                         ),
                     )

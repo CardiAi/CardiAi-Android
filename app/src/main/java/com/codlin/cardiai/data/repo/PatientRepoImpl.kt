@@ -24,25 +24,6 @@ class PatientRepoImpl @Inject constructor(private val patientService: PatientSer
                 PatientPagingSource(patientService, searchQuery)
             }
         ).flow
-//    override fun getPatients(page: Int, searchQuery: String?): Flow<Resource<List<Patient>>> =
-//        flow {
-//            emit(Resource.Loading())
-//            val patientsDtoList = tryRequest {
-//                val response = patientService.getPatients(page, searchQuery)
-//                if (response.isSuccessful) {
-//                    val body = response.body()!!
-//                    body.data!!.data
-//                } else {
-//                    null
-//                }
-//            }
-//            val patientList = patientsDtoList?.let { list ->
-//                list.map {
-//                    it.toDomainModel()
-//                }
-//            }
-//            emit(Resource.Success(patientList))
-//        }
 
     override fun addPatient(name: String, age: Int, gender: Gender): Flow<Resource<Patient>> {
         TODO("Not yet implemented")

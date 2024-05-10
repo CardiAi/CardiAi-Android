@@ -23,7 +23,8 @@ fun RecordValueItem(
             withStyle(style = MaterialTheme.typography.titleSmall.toSpanStyle()) {
                 append(value)
             }
-        }
+        },
+        modifier = modifier
     )
 }
 

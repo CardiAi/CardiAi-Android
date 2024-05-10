@@ -35,6 +35,12 @@ class PatientListViewModel @Inject constructor(
         searchPatients("", isInstant = true)
     }
 
+    fun refreshPatients() {
+        viewModelScope.launch {
+            getPatients()
+        }
+    }
+
     private suspend fun getPatients(query: String? = null) {
         getPatientsUsecase(query)
             .distinctUntilChanged()
@@ -77,7 +83,7 @@ class PatientListViewModel @Inject constructor(
                 } else {
                     _state.update {
                         it.copy(
-                            navDestination = PatientsListDestination.PatientsListDetailsDestination(
+                            navDestination = PatientsListDestination.PatientsDetailsDestination(
                                 event.patient
                             )
                         )

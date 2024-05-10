@@ -3,11 +3,10 @@ package com.codlin.cardiai.presentation.home.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +22,7 @@ fun <T : Any> PaginationLazyColumn(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState = rememberLazyListState(),
     loadingItem: (@Composable () -> Unit)? = null,
+    emptyListComposable: (@Composable LazyItemScope.() -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
     content: @Composable (T) -> Unit
 ) {
@@ -52,14 +52,8 @@ fun <T : Any> PaginationLazyColumn(
                     if (error.error is NoDataException) {
                         if (itemCount == 0) {
                             item {
-                                Box(
-                                    modifier = Modifier.fillParentMaxSize(),
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    Text(
-                                        text = "You have no patients added yet.",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                    )
+                                if (emptyListComposable != null) {
+                                    emptyListComposable()
                                 }
                             }
                         }

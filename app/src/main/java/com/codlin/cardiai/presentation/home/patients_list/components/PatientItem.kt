@@ -49,11 +49,13 @@ fun PatientItem(
             verticalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.weight(1f)
         ) {
-            Text(
-                text = patient.name!!,
-                style = MaterialTheme.typography.bodyMedium,
-                color = Neutrals1000,
-            )
+            patient.name?.let {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Neutrals1000,
+                )
+            }
 
             Text(
                 text = UIFormatter.formatRecordResult(patient.lastResult),
