@@ -72,7 +72,13 @@ class PatientListViewModel @Inject constructor(
 
     fun refreshPatients() {
         viewModelScope.launch {
+            _patients.emit(PagingData.empty())
             getPatients()
+            _state.update {
+                it.copy(
+                    shouldRefresh = true,
+                )
+            }
         }
     }
 
@@ -80,10 +86,8 @@ class PatientListViewModel @Inject constructor(
         getPatientsUsecase(query)
             .distinctUntilChanged()
             .cachedIn(viewModelScope)
-            .collect { patients ->
-                _patients.update {
-                    patients
-                }
+            .collectLatest { patients ->
+                _patients.emit(patients)
             }
     }
 
@@ -207,6 +211,7 @@ class PatientListViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isBottomSheetVisible = true,
+                        addedPatient = Patient(),
                     )
                 }
             }
@@ -262,12 +267,16 @@ class PatientListViewModel @Inject constructor(
                 }
             }
 
-            is PatientListEvent.OnAddPatient -> {
+            is PatientListEvent.OnEditNewPatient -> {
                 _state.update {
                     it.copy(
                         addedPatient = it.addedPatient.copy(
                             name = event.name ?: it.addedPatient.name,
-                            age = event.age?.toInt() ?: it.addedPatient.age,
+                            age = try {
+                                event.age?.toInt() ?: it.addedPatient.age
+                            } catch (_: Exception) {
+                                null
+                            },
                             gender = event.gender ?: it.addedPatient.gender
                         )
                     )

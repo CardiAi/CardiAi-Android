@@ -1,4 +1,4 @@
-package com.codlin.cardiai.presentation.home.patient_details.components
+package com.codlin.cardiai.presentation.home.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,14 +23,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
 import com.codlin.cardiai.domain.model.Gender
 import com.codlin.cardiai.domain.model.Patient
 import com.codlin.cardiai.presentation.components.ThemeButton
 import com.codlin.cardiai.presentation.components.ThemeTextField
-import com.codlin.cardiai.presentation.theme.CardiAiTheme
 import com.codlin.cardiai.presentation.theme.Secondary1000
 import com.codlin.cardiai.presentation.theme.Secondary200
 
@@ -77,7 +75,8 @@ fun BottomSheet(
                     onValueChange = {
                         if (
                             it.isEmpty() ||
-                            it.isDigitsOnly()
+                            (it.isDigitsOnly() &&
+                                    it.length <= 3)
                         ) {
                             onAgeChanged(it)
                         }
@@ -119,88 +118,5 @@ fun BottomSheet(
                 ThemeButton(text = "Submit", onClick = onSubmitClicked)
             }
         }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun Components(
-    patient: Patient?,
-    onNameChanged: (String) -> Unit,
-    onAgeChanged: (String) -> Unit,
-    onGenderChanged: (Gender) -> Unit,
-    onSubmitClicked: () -> Unit,
-) {
-    Column(
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp)
-    ) {
-        ThemeTextField(
-            value = patient?.name ?: "",
-            onValueChange = onNameChanged,
-            label = "Name",
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next,
-            )
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        ThemeTextField(
-            value = patient?.age?.toString() ?: "",
-            onValueChange = onAgeChanged,
-            label = "Age",
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Next,
-            )
-        )
-        Spacer(modifier = Modifier.height(32.dp))
-        SingleChoiceSegmentedButtonRow {
-            val colors = SegmentedButtonDefaults.colors(
-                activeContainerColor = Secondary200,
-                activeContentColor = Secondary1000,
-                inactiveContentColor = Secondary1000,
-                inactiveBorderColor = Secondary1000,
-                activeBorderColor = Secondary1000
-            )
-            SegmentedButton(
-                selected = patient?.gender == Gender.Male,
-                onClick = { onGenderChanged(Gender.Male) },
-                shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
-                colors = colors
-            ) {
-                Text(text = "Male")
-            }
-            SegmentedButton(
-                selected = patient?.gender == Gender.Female,
-                onClick = { onGenderChanged(Gender.Female) },
-                shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
-                colors = colors,
-            ) {
-                Text(text = "Female")
-            }
-        }
-        Spacer(modifier = Modifier.height(32.dp))
-        ThemeButton(text = "Submit", onClick = onSubmitClicked)
-    }
-
-}
-
-@Composable
-@Preview(showBackground = true)
-private fun BottomSheetPreview() {
-    CardiAiTheme {
-        Components(
-            patient = null,
-            onNameChanged = {},
-            onAgeChanged = {},
-            onGenderChanged = {},
-            onSubmitClicked = {},
-        )
     }
 }

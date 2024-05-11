@@ -16,7 +16,7 @@ sealed class PatientListEvent {
     data object OnBottomSheetDismissed : PatientListEvent()
     data object OnContinueClicked : PatientListEvent()
     data object OnConfirmAdd : PatientListEvent()
-    data class OnAddPatient(
+    data class OnEditNewPatient(
         val name: String? = null,
         val age: String? = null,
         val gender: Gender? = null

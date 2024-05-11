@@ -13,6 +13,7 @@ data class PatientListState(
     val isBottomSheetVisible: Boolean = false,
     val screenError: String? = null,
     val isLoading: Boolean = false,
+    val shouldRefresh: Boolean = false,
     val navDestination: PatientsListDestination? = null,
 )
 

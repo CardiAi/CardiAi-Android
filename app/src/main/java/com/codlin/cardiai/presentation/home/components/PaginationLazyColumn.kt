@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -15,6 +16,7 @@ import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import com.codlin.cardiai.domain.util.exception.NoDataException
 import com.codlin.cardiai.presentation.components.LazyPagingItemsError
+import timber.log.Timber
 
 @Composable
 fun <T : Any> PaginationLazyColumn(
@@ -24,6 +26,7 @@ fun <T : Any> PaginationLazyColumn(
     loadingItem: (@Composable () -> Unit)? = null,
     emptyListComposable: (@Composable LazyItemScope.() -> Unit)? = null,
     contentPadding: PaddingValues = PaddingValues(vertical = 16.dp),
+    refresh: Boolean = false,
     content: @Composable (T) -> Unit
 ) {
     LazyColumn(
@@ -31,30 +34,14 @@ fun <T : Any> PaginationLazyColumn(
         state = lazyListState,
         contentPadding = contentPadding
     ) {
-        items(pagingItems.itemCount) { index ->
-            content(pagingItems[index]!!)
-        }
         pagingItems.apply {
             when {
-                loadState.refresh is LoadState.Loading -> {
-                    item {
-                        Box(
-                            modifier = Modifier.fillParentMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            CircularProgressIndicator()
-                        }
-                    }
-                }
-
                 loadState.refresh is LoadState.Error -> {
                     val error = pagingItems.loadState.refresh as LoadState.Error
                     if (error.error is NoDataException) {
-                        if (itemCount == 0) {
-                            item {
-                                if (emptyListComposable != null) {
-                                    emptyListComposable()
-                                }
+                        item {
+                            if (emptyListComposable != null) {
+                                emptyListComposable()
                             }
                         }
                     } else {
@@ -66,6 +53,30 @@ fun <T : Any> PaginationLazyColumn(
                     }
                 }
 
+                loadState.append is LoadState.NotLoading -> {
+                    items(pagingItems.itemCount) { index ->
+                        content(pagingItems[index]!!)
+                        LaunchedEffect(key1 = refresh) {
+                            if (refresh) {
+                                pagingItems.refresh()
+                            }
+                        }
+                        LaunchedEffect(key1 = pagingItems.itemCount) {
+                            Timber.d("Paging Count: ${pagingItems.itemCount}")
+                        }
+                    }
+                }
+
+                loadState.refresh is LoadState.Loading -> {
+                    item {
+                        Box(
+                            modifier = Modifier.fillParentMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator()
+                        }
+                    }
+                }
 
                 loadState.append is LoadState.Loading -> {
                     loadingItem?.let {

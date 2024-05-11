@@ -48,6 +48,7 @@ class PatientDetailsViewModel @AssistedInject constructor(
 
     private fun getPatientRecords() {
         viewModelScope.launch {
+            _records.emit(PagingData.empty())
             getPatientRecordsUseCase(_state.value.patient.id!!)
                 .distinctUntilChanged()
                 .cachedIn(viewModelScope)
@@ -184,7 +185,11 @@ class PatientDetailsViewModel @AssistedInject constructor(
                     it.copy(
                         editablePatient = it.editablePatient.copy(
                             name = event.name ?: it.editablePatient.name,
-                            age = event.age?.toInt() ?: it.editablePatient.age,
+                            age = try {
+                                event.age?.toInt() ?: it.editablePatient.age
+                            } catch (_: Exception) {
+                                null
+                            },
                             gender = event.gender ?: it.editablePatient.gender
                         )
                     )

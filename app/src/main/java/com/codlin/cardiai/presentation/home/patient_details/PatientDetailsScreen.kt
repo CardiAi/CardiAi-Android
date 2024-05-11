@@ -43,8 +43,8 @@ import com.codlin.cardiai.presentation.UIFormatter
 import com.codlin.cardiai.presentation.components.RecordIcon
 import com.codlin.cardiai.presentation.destinations.NewRecordScreenDestination
 import com.codlin.cardiai.presentation.destinations.RecordDetailsScreenDestination
+import com.codlin.cardiai.presentation.home.components.BottomSheet
 import com.codlin.cardiai.presentation.home.components.PaginationLazyColumn
-import com.codlin.cardiai.presentation.home.patient_details.components.BottomSheet
 import com.codlin.cardiai.presentation.home.patient_details.components.RecordItem
 import com.codlin.cardiai.presentation.home.patients_list.components.StartDiagnosisButton
 import com.codlin.cardiai.presentation.navigation.HomeNavGraph

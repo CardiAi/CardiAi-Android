@@ -45,8 +45,8 @@ import com.codlin.cardiai.presentation.components.SearchField
 import com.codlin.cardiai.presentation.components.isScrollingUp
 import com.codlin.cardiai.presentation.destinations.NewRecordScreenDestination
 import com.codlin.cardiai.presentation.destinations.PatientDetailsScreenDestination
+import com.codlin.cardiai.presentation.home.components.BottomSheet
 import com.codlin.cardiai.presentation.home.components.PaginationLazyColumn
-import com.codlin.cardiai.presentation.home.patient_details.components.BottomSheet
 import com.codlin.cardiai.presentation.home.patients_list.components.AddPatientButton
 import com.codlin.cardiai.presentation.home.patients_list.components.ConfirmSelectionButton
 import com.codlin.cardiai.presentation.home.patients_list.components.PatientItem
@@ -244,6 +244,7 @@ private fun PatientListContent(
                 }
             },
             lazyListState = listState,
+            refresh = state.shouldRefresh,
         ) { patient ->
             PatientItem(
                 patient = patient,
@@ -253,16 +254,16 @@ private fun PatientListContent(
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                 selected = patient.id == state.selectedId,
             )
-            BottomSheet(
-                patient = state.addedPatient,
-                isVisible = state.isBottomSheetVisible,
-                sheetState = sheetState,
-                onNameChanged = { onEvent(PatientListEvent.OnAddPatient(name = it)) },
-                onAgeChanged = { onEvent(PatientListEvent.OnAddPatient(age = it)) },
-                onGenderChanged = { onEvent(PatientListEvent.OnAddPatient(gender = it)) },
-                onSubmitClicked = { onEvent(PatientListEvent.OnConfirmAdd) },
-                onDismiss = { onEvent(PatientListEvent.OnBottomSheetDismissed) })
         }
+        BottomSheet(
+            patient = state.addedPatient,
+            isVisible = state.isBottomSheetVisible,
+            sheetState = sheetState,
+            onNameChanged = { onEvent(PatientListEvent.OnEditNewPatient(name = it)) },
+            onAgeChanged = { onEvent(PatientListEvent.OnEditNewPatient(age = it)) },
+            onGenderChanged = { onEvent(PatientListEvent.OnEditNewPatient(gender = it)) },
+            onSubmitClicked = { onEvent(PatientListEvent.OnConfirmAdd) },
+            onDismiss = { onEvent(PatientListEvent.OnBottomSheetDismissed) })
     }
 }
 

@@ -10,6 +10,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
@@ -20,6 +21,7 @@ fun NumericalQuestionItem(
     question: NumericQuestion,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
+    imeAction: ImeAction = ImeAction.Next,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -32,7 +34,7 @@ fun NumericalQuestionItem(
             onValueChange = {
                 if (
                     it.isEmpty() ||
-                    (question.isDecimal && it.matches(Regex("^\\d*\\.?\\d*\$"))) ||
+                    (question.isDecimal && it.matches(Regex("^-?\\d*\\.?\\d*\$"))) ||
                     (!question.isDecimal && it.isDigitsOnly())
                 ) {
                     onValueChange(it)
@@ -40,7 +42,10 @@ fun NumericalQuestionItem(
             },
             placeholder = { Text(question.placeholder) },
             suffix = { question.unit?.let { Text(text = it) } },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
+                imeAction = imeAction
+            ),
             modifier = Modifier.fillMaxWidth(),
             singleLine = true,
         )
