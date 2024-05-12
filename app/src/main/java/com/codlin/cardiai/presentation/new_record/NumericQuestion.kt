@@ -11,5 +11,9 @@ data class NumericQuestion(
     val answer: String? = null,
 ) {
     val isAnswerValid
-        get() = answer?.toDouble()?.let { it in minValue..maxValue }
+        get() = try {
+            answer?.toDouble()?.let { it in minValue..maxValue }
+        } catch (_: Exception) {
+            false
+        }
 }
