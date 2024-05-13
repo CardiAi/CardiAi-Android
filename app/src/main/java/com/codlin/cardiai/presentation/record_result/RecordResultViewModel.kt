@@ -83,7 +83,7 @@ class RecordResultViewModel @AssistedInject constructor(
     fun onEvent(event: RecordResultEvent) {
         when (event) {
             RecordResultEvent.OnContinueClicked -> navigateToPatientsList()
-            RecordResultEvent.OnBackClicked -> navigateToPatientsList()
+            RecordResultEvent.OnNavigateBack -> navigateToPatientsList()
         }
     }
 

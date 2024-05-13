@@ -29,19 +29,16 @@ import com.codlin.cardiai.domain.model.record.Record
 import com.codlin.cardiai.presentation.UIFormatter
 import com.codlin.cardiai.presentation.components.RecordIcon
 import com.codlin.cardiai.presentation.components.ThemeButton
-import com.codlin.cardiai.presentation.destinations.NewRecordScreenDestination
-import com.codlin.cardiai.presentation.destinations.PatientListScreenDestination
 import com.codlin.cardiai.presentation.navigation.HomeNavGraph
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.popUpTo
+import com.ramcosta.composedestinations.result.ResultBackNavigator
 import timber.log.Timber
 
 @HomeNavGraph
 @Destination(navArgsDelegate = Record::class)
 @Composable
 fun RecordResultScreen(
-    navigator: DestinationsNavigator,
+    resultNavigator: ResultBackNavigator<Boolean>,
     record: Record
 ) {
     val viewModel =
@@ -52,7 +49,7 @@ fun RecordResultScreen(
     val snackBarHostState = remember { SnackbarHostState() }
 
     BackHandler {
-        viewModel.onEvent(RecordResultEvent.OnBackClicked)
+        viewModel.onEvent(RecordResultEvent.OnNavigateBack)
     }
 
     LaunchedEffect(key1 = state.navDestination, key2 = state.screenError) {
@@ -60,11 +57,7 @@ fun RecordResultScreen(
             when (it) {
                 RecordResultDestination.PatientListDestination -> {
                     Timber.d("Navigate back to patientList")
-                    navigator.navigate(PatientListScreenDestination) {
-                        popUpTo(NewRecordScreenDestination) {
-                            inclusive = true
-                        }
-                    }
+                    resultNavigator.navigateBack(result = true)
                 }
             }
         }
@@ -90,6 +83,7 @@ fun RecordResultScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     CircularProgressIndicator()
+                    Spacer(modifier = Modifier.height(8.dp))
                     Text(text = "Talking to the roboty thing to get the result.")
                 }
             } else {
@@ -105,30 +99,34 @@ private fun RecordResultContent(
     onEvent: (RecordResultEvent) -> Unit
 ) {
     Column(
-        verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(
-            text = state.record.patientName!!,
-            style = MaterialTheme.typography.titleLarge,
-            color = Color.Black,
-            modifier = Modifier.padding(vertical = 24.dp)
-        )
-        RecordIcon(
-            result = state.record.result,
-            modifierBackground = Modifier.size(160.dp),
-            modifierHeart = Modifier.size(92.dp)
-        )
-        Text(
-            text = UIFormatter.formatRecordResult(state.record.result),
-            style = MaterialTheme.typography.titleLarge,
-            color = Color.Black,
-            modifier = Modifier.padding(vertical = 24.dp),
-        )
-        Spacer(modifier = Modifier.height(170.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.weight(1f),
+        ) {
+            Text(
+                text = state.record.patientName!!,
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.Black,
+                modifier = Modifier.padding(vertical = 24.dp)
+            )
+            RecordIcon(
+                result = state.record.result,
+                modifierBackground = Modifier.size(160.dp),
+                modifierHeart = Modifier.size(92.dp)
+            )
+            Text(
+                text = UIFormatter.formatRecordResult(state.record.result),
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.Black,
+                modifier = Modifier.padding(vertical = 24.dp),
+            )
+        }
         ThemeButton(
             text = "Continue",
             onClick = { onEvent(RecordResultEvent.OnContinueClicked) }

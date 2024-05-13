@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.codlin.cardiai.R
-import com.codlin.cardiai.presentation.destinations.NewRecordScreenDestination
+import com.codlin.cardiai.presentation.destinations.PatientListScreenDestination
 import com.codlin.cardiai.presentation.destinations.RecordResultScreenDestination
 import com.codlin.cardiai.presentation.navigation.HomeNavGraph
 import com.codlin.cardiai.presentation.new_record.components.MCQuestion
@@ -55,8 +55,8 @@ fun NewRecordScreen(
                 is NewRecordDestination.RecordResultsDestination -> navigator.navigate(
                     RecordResultScreenDestination(it.record)
                 ) {
-                    popUpTo(NewRecordScreenDestination) {
-                        inclusive = true
+                    popUpTo(PatientListScreenDestination) {
+                        inclusive = false
                     }
                 }
 

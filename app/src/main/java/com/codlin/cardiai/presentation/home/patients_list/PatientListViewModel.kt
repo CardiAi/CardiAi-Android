@@ -203,6 +203,7 @@ class PatientListViewModel @Inject constructor(
                         navDestination = PatientsListDestination.NewRecordDestination(_state.value.selectedId!!),
                         selectedId = null,
                         inSelectMode = false,
+                        isSearchVisible = false,
                     )
                 }
             }

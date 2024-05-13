@@ -45,6 +45,7 @@ import com.codlin.cardiai.presentation.components.SearchField
 import com.codlin.cardiai.presentation.components.isScrollingUp
 import com.codlin.cardiai.presentation.destinations.NewRecordScreenDestination
 import com.codlin.cardiai.presentation.destinations.PatientDetailsScreenDestination
+import com.codlin.cardiai.presentation.destinations.RecordResultScreenDestination
 import com.codlin.cardiai.presentation.home.components.BottomSheet
 import com.codlin.cardiai.presentation.home.components.PaginationLazyColumn
 import com.codlin.cardiai.presentation.home.patients_list.components.AddPatientButton
@@ -66,11 +67,19 @@ fun PatientListScreen(
     viewModel: PatientListViewModel = hiltViewModel(),
     navigator: DestinationsNavigator,
     patientDetailsResult: ResultRecipient<PatientDetailsScreenDestination, Boolean>,
+    recordResultResult: ResultRecipient<RecordResultScreenDestination, Boolean>,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val patients = viewModel.patients.collectAsLazyPagingItems()
 
     patientDetailsResult.onNavResult { result ->
+        if (result is NavResult.Value) {
+            if (result.value) {
+                viewModel.refreshPatients()
+            }
+        }
+    }
+    recordResultResult.onNavResult { result ->
         if (result is NavResult.Value) {
             if (result.value) {
                 viewModel.refreshPatients()
