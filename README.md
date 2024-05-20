@@ -82,3 +82,7 @@ CardiAi is built using a robust technology stack to ensure high performance and 
 * Clean Architecture (Data - Domain - Presentation)
 * Retrofit: For network operations.
 * Paging 3: For efficient data pagination.
+
+## Contributors
+* <a href="https://github.com/mSaayeh" target="_blank">Mohannad El-Sayeh</a> : [eng.mohannadelsayeh@gmail.com](mailto:eng.mohannadelsayeh@gmail.com)
+* <a href="https://github.com/NadinAhmed" target="_blank">Nadin Ahmed</a> : [nadinahmed316@gmail.com](mailto:nadinahmed316@gmail.com)
