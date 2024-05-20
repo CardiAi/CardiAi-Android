@@ -32,6 +32,8 @@ recording diagnostics, and ensuring secure user authentication.
   <img src="Screenshots/Result.png" alt="Diagnosis Flow - Result" width="200"/>
 </p>
 
+You can find more screenshots of the app in the [Screenshots Folder](https://github.com/CardiAi/CardiAi-Android/tree/master/Screenshots)
+
 ## Features
 
 ### Authentication
