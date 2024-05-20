@@ -4,6 +4,10 @@ CardiAi is an Android application designed to assist doctors in heart diagnosis 
 learning model. This app provides a comprehensive platform for managing patient information,
 recording diagnostics, and ensuring secure user authentication.
 
+## Demo Video
+
+[![Watch the video](https://img.youtube.com/vi/kGyIA0FJoXg/maxresdefault.jpg)](https://youtu.be/kGyIA0FJoXg)
+
 ## Screenshots
 
 ### Authorization
@@ -32,7 +36,8 @@ recording diagnostics, and ensuring secure user authentication.
   <img src="Screenshots/Result.png" alt="Diagnosis Flow - Result" width="200"/>
 </p>
 
-You can find more screenshots of the app in the [Screenshots Folder](https://github.com/CardiAi/CardiAi-Android/tree/master/Screenshots)
+You can find more screenshots of the app in
+the [Screenshots Folder](https://github.com/CardiAi/CardiAi-Android/tree/master/Screenshots)
 
 ## Features
 
@@ -84,5 +89,8 @@ CardiAi is built using a robust technology stack to ensure high performance and 
 * Paging 3: For efficient data pagination.
 
 ## Contributors
-* <a href="https://github.com/mSaayeh" target="_blank">Mohannad El-Sayeh</a> : [eng.mohannadelsayeh@gmail.com](mailto:eng.mohannadelsayeh@gmail.com)
-* <a href="https://github.com/NadinAhmed" target="_blank">Nadin Ahmed</a> : [nadinahmed316@gmail.com](mailto:nadinahmed316@gmail.com)
+
+* <a href="https://github.com/mSaayeh" target="_blank">Mohannad
+  El-Sayeh</a> : [eng.mohannadelsayeh@gmail.com](mailto:eng.mohannadelsayeh@gmail.com)
+* <a href="https://github.com/NadinAhmed" target="_blank">Nadin
+  Ahmed</a> : [nadinahmed316@gmail.com](mailto:nadinahmed316@gmail.com)
