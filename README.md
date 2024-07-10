@@ -82,7 +82,7 @@ CardiAi is built using a robust technology stack to ensure high performance and 
 * Coroutines
 * Jetpack Compose
 * Compose Destinations Library
-* MVVM (Model-View-ViewModel)
+* MVI (Model-View-Intent)
 * DI with Hilt (Dependency Injection)
 * Clean Architecture (Data - Domain - Presentation)
 * Retrofit: For network operations.
